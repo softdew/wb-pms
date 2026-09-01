@@ -7,6 +7,7 @@ use App\Models\Organisation;
 use App\Models\Scopes\OrganisationScope;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -14,6 +15,7 @@ use ReflectionClass;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
+
 
 /**
  * The guard that outlives us.
@@ -25,6 +27,14 @@ use Tests\TestCase;
  */
 class ModelsUseTenantScopeTest extends TestCase
 {
+    /**
+     * Required. Without it this test inspects whatever schema cmms_test was
+     * last left in, and PHPUnit runs Tests\Unit before any RefreshDatabase
+     * test triggers migrate:fresh -- so every run that adds tables reports
+     * those tables as unindexed, then passes on the next run.
+     */
+    use RefreshDatabase;
+
     /**
      * Models that legitimately hold organisation_id without being scoped.
      * User and Organisation are how the tenant context is established, so

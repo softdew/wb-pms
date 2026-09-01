@@ -11,6 +11,7 @@ use App\Models\PartCategory;
 use App\Models\Trade;
 use App\Support\Tenancy;
 use Illuminate\Database\Seeder;
+use App\Models\MaintenanceSetting;
 
 /**
  * Reference data is copied into each organisation when it is created, rather
@@ -37,6 +38,7 @@ class ReferenceDataSeeder extends Seeder
     protected function seedOne(): void
     {
         $this->seedCriticalityScales();
+		MaintenanceSetting::current();
         $this->seedFailureCodes();
         $this->seedEquipmentCategories();
         $this->seedPartCategories();
