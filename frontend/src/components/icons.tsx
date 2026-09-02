@@ -161,6 +161,13 @@ export const IconEquipment = (p: IconProps) => (
   </Svg>
 );
 
+/** Ready to work: nothing in the way but hands. */
+export const IconSpanner = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M15.2 4.4a4.6 4.6 0 0 0-5.9 5.9L4 15.6a2 2 0 0 0 0 2.83l1.57 1.57a2 2 0 0 0 2.83 0l5.3-5.3a4.6 4.6 0 0 0 5.9-5.9l-2.9 2.9-2.5-.5-.5-2.5z" />
+  </Svg>
+);
+
 /** The brand mark: a sounding taken. */
 export const Mark = ({ className }: IconProps) => (
   <svg

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BacklogPipeline, type BacklogData } from '@/components/backlog-pipeline';
 import { ProportionBar } from '@/components/proportion-bar';
 import { Sounding } from '@/components/sounding';
 import { get } from '@/lib/api';
@@ -51,24 +52,7 @@ export default async function FleetPage() {
           </section>
         )}
 
-        {/* Backlog reads as one line of three figures, not three cards. */}
-        {backlog ? (
-          <section className="flex flex-wrap divide-x divide-ink-12 overflow-hidden rounded-lg border border-ink-12 bg-white">
-            {(Object.keys(backlogLabel) as BacklogState[]).map((state) => (
-              <div key={state} className="min-w-[200px] flex-1 px-5 py-3.5">
-                <p className="text-[12.5px] text-ink-45">{backlogLabel[state]}</p>
-                <p className="font-cond text-[23px] leading-tight font-semibold">
-                  {backlog[state]?.count ?? 0}
-                  {backlog[state]?.overdue ? (
-                    <span className="ml-2 font-sans text-[12.5px] font-medium text-danger">
-                      {backlog[state].overdue} past due
-                    </span>
-                  ) : null}
-                </p>
-              </div>
-            ))}
-          </section>
-        ) : null}
+        {backlog ? <BacklogPipeline backlog={backlog as BacklogData} /> : null}
 
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
           <div className="flex items-center gap-3 border-b border-ink-12 px-4.5 py-3">

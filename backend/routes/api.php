@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\VesselController;
 use App\Http\Controllers\Api\WorkOrderController;
 use App\Support\Permissions as P;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\FailureCodeController;
 
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
@@ -51,6 +52,7 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
         Route::get('work-orders', [WorkOrderController::class, 'index']);
         Route::get('work-orders/backlog', [WorkOrderController::class, 'backlog']);
         Route::get('work-orders/{workOrder}', [WorkOrderController::class, 'show']);
+		Route::get('failure-codes', [FailureCodeController::class, 'index']);
     });
 
     Route::middleware('permission:'.P::VIEW_STORES)->group(function () {

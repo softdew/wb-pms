@@ -15,6 +15,11 @@ export interface Tick {
  * like a handful of tasks drifting towards it, and a table of counts cannot
  * show the difference.
  *
+ * Printed on chart paper rather than deep water. A real Admiralty chart is pale
+ * with blue contour lines and only the deepest areas are dark — and the ticks
+ * are the information, so they need a ground that lets them stand up rather
+ * than one that swallows them.
+ *
  * The axis is proportion of interval, not hours, because a 10-hour check and a
  * 9,000-hour overhaul cannot share an absolute scale.
  */
@@ -46,25 +51,11 @@ export function Sounding({
   };
 
   return (
-    <section className="deep-surface relative overflow-hidden rounded-lg px-6 pt-5 pb-3.5 text-white shadow-[inset_0_1px_0_rgba(159,216,222,.16)]">
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-40"
-        viewBox="0 0 1200 190"
-        preserveAspectRatio="none"
-        aria-hidden
-      >
-        <g fill="none" stroke="rgba(207,226,228,.30)" strokeWidth="1">
-          <path d="M0,150 C160,132 250,168 400,146 C560,122 660,162 820,138 C960,118 1080,150 1200,132" />
-          <path d="M0,116 C170,96 260,132 420,110 C580,88 690,124 840,102 C980,82 1090,112 1200,96" />
-          <path d="M0,80 C150,62 280,96 430,74 C590,52 700,86 850,66 C990,48 1100,76 1200,60" />
-          <path d="M0,44 C180,28 290,58 440,38 C600,18 720,48 870,30 C1010,14 1110,40 1200,26" />
-        </g>
-      </svg>
-
-      <div className="relative flex flex-wrap items-baseline gap-3.5">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        {hint ? <p className="text-[13px] text-shoal/75">{hint}</p> : null}
-        <div className="ml-auto flex gap-4 text-[12.5px] text-shoal/85">
+    <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
+      <div className="flex flex-wrap items-baseline gap-3.5 border-b border-ink-12 px-5 py-3">
+        <h2 className="text-[17px] font-semibold">{title}</h2>
+        {hint ? <p className="text-[13px] text-ink-45">{hint}</p> : null}
+        <div className="ml-auto flex gap-4 text-[12.5px] text-ink-70">
           <span className="flex items-center gap-1.5">
             <i className="h-2 w-2 rounded-sm bg-danger" aria-hidden /> Due
           </span>
@@ -77,53 +68,76 @@ export function Sounding({
         </div>
       </div>
 
-      <div className="relative mt-3.5 h-[118px]">
-        <div className="absolute top-0 bottom-[22px] left-0 w-[44%] rounded bg-danger/20" />
-        <div className="absolute top-0 bottom-[22px] left-[44%] w-[6%] rounded bg-caution/22" />
-        <div className="absolute top-0 bottom-[22px] left-[50%] w-[50%] rounded bg-safe/16" />
-        <div className="absolute top-0 bottom-[22px] left-[44%] w-px bg-shoal/35" />
-        <div className="absolute top-0 bottom-[22px] left-[50%] w-px bg-shoal/35" />
+      <div className="px-5 pt-4 pb-3">
+        <div className="relative h-[132px]">
+          {/* Depth tints. Pale, so the ticks read as marks on paper. */}
+          <div className="absolute top-0 bottom-[24px] left-0 w-[44%] rounded-l bg-danger-soft" />
+          <div className="absolute top-0 bottom-[24px] left-[44%] w-[6%] bg-caution-soft" />
+          <div className="absolute top-0 bottom-[24px] left-[50%] w-[50%] rounded-r bg-safe-soft" />
 
-        <p className="font-cond absolute top-1.5 left-3 text-[12.5px] font-semibold tracking-wide text-[#FF6FA8]">
-          Overdue
-        </p>
-        <p className="font-cond absolute top-[22px] left-3 text-[27px] leading-none font-bold">{due}</p>
+          {/* Contour lines, as printed on the chart. */}
+          <svg
+            className="pointer-events-none absolute top-0 right-0 bottom-[24px] left-0 h-[108px] w-full"
+            viewBox="0 0 1200 108"
+            preserveAspectRatio="none"
+            aria-hidden
+          >
+            <g fill="none" stroke="#4FA8B4" strokeWidth="1" opacity="0.30">
+              <path d="M0,88 C160,74 250,100 400,86 C560,70 660,96 820,80 C960,66 1080,88 1200,74" />
+              <path d="M0,62 C170,48 260,74 420,60 C580,44 690,70 840,54 C980,40 1090,62 1200,48" />
+              <path d="M0,36 C150,24 280,50 430,34 C590,18 700,44 850,28 C990,14 1100,36 1200,22" />
+            </g>
+          </svg>
 
-        <p className="font-cond absolute top-1.5 left-[calc(44%+10px)] text-[12.5px] font-semibold tracking-wide text-[#F2A93B]">
-          Soon
-        </p>
-        <p className="font-cond absolute top-[22px] left-[calc(44%+10px)] text-[27px] leading-none font-bold">
-          {soon}
-        </p>
+          <div className="absolute top-0 bottom-[24px] left-[44%] w-px bg-ink-22" />
+          <div className="absolute top-0 bottom-[24px] left-[50%] w-px bg-ink-22" />
 
-        <p className="font-cond absolute top-1.5 left-[calc(50%+10px)] text-[12.5px] font-semibold tracking-wide text-[#54C79B]">
-          On track
-        </p>
-        <p className="font-cond absolute top-[22px] left-[calc(50%+10px)] text-[27px] leading-none font-bold">
-          {ok}
-        </p>
+          <p className="font-cond absolute top-2 left-3.5 text-[12.5px] font-semibold tracking-wide text-danger">
+            Overdue
+          </p>
+          <p className="font-cond absolute top-[22px] left-3.5 text-[30px] leading-none font-bold">
+            {due}
+          </p>
 
-        {ticks.map((tick, i) => (
-          <span
-            key={i}
-            title={tick.label}
-            className="absolute bottom-[22px] w-[3px] -translate-x-1/2 rounded-sm"
-            style={{
-              left: `${place(tick)}%`,
-              height: `${34 + (i % 5) * 9}px`,
-              background: colour[tick.status],
-            }}
-          />
-        ))}
+          <p className="font-cond absolute top-2 left-[calc(44%+9px)] text-[12.5px] font-semibold tracking-wide text-caution">
+            Soon
+          </p>
+          <p className="font-cond absolute top-[22px] left-[calc(44%+9px)] text-[30px] leading-none font-bold">
+            {soon}
+          </p>
 
-        <div className="absolute right-0 bottom-0 left-0 h-[22px] border-t border-shoal/30">
-          <span className="absolute top-1 left-[0.6%] -translate-x-1/2 text-[11.5px] whitespace-nowrap text-shoal/70">
-            a full interval past
-          </span>
-          <span className="absolute top-1 left-[44%] -translate-x-1/2 text-[11.5px] text-shoal/70">due</span>
-          <span className="absolute top-1 left-[98.6%] -translate-x-1/2 text-[11.5px] whitespace-nowrap text-shoal/70">
-            just done
-          </span>
+          <p className="font-cond absolute top-2 left-[calc(50%+10px)] text-[12.5px] font-semibold tracking-wide text-safe">
+            On track
+          </p>
+          <p className="font-cond absolute top-[22px] left-[calc(50%+10px)] text-[30px] leading-none font-bold">
+            {ok}
+          </p>
+
+          {/* The soundings themselves. */}
+          {ticks.map((tick, i) => (
+            <span
+              key={i}
+              title={tick.label}
+              className="absolute bottom-[24px] w-[3px] -translate-x-1/2 rounded-t-sm"
+              style={{
+                left: `${place(tick)}%`,
+                height: `${36 + (i % 5) * 9}px`,
+                background: colour[tick.status],
+              }}
+            />
+          ))}
+
+          <div className="absolute right-0 bottom-0 left-0 h-[24px] border-t border-ink-22">
+            <span className="absolute top-1.5 left-0 text-[11.5px] whitespace-nowrap text-ink-45">
+              a full interval past
+            </span>
+            <span className="absolute top-1.5 left-[44%] -translate-x-1/2 text-[11.5px] font-medium text-ink-70">
+              due
+            </span>
+            <span className="absolute top-1.5 right-0 text-[11.5px] whitespace-nowrap text-ink-45">
+              just done
+            </span>
+          </div>
         </div>
       </div>
     </section>
