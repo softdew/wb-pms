@@ -32,6 +32,8 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
     Route::middleware('permission:'.P::VIEW_FLEET)->group(function () {
         Route::get('vessels', [VesselController::class, 'index']);
         Route::get('vessels/{vessel}', [VesselController::class, 'show']);
+		Route::get('vessels/{vessel}/overview', [VesselController::class, 'overview']);
+        Route::get('vessels/{vessel}/history', [VesselController::class, 'history']);
         Route::get('equipment', [EquipmentController::class, 'index']);
         Route::get('equipment/{equipment}', [EquipmentController::class, 'show']);
         Route::get('equipment/{equipment}/meter-readings', [EquipmentController::class, 'meterReadings']);
