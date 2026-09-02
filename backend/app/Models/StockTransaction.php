@@ -15,7 +15,7 @@ class StockTransaction extends Model
     protected $fillable = [
         'part_id', 'work_order_id', 'location_id', 'type',
         'quantity', 'balance_after', 'unit_cost',
-        'reference_no', 'transacted_on', 'recorded_by', 'remarks',
+        'reference_no', 'transacted_on', 'recorded_by', 'remarks', 'operator_id'
     ];
 
     protected function casts(): array

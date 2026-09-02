@@ -35,8 +35,20 @@ class WorkOrderPart extends Model
         return $this->belongsTo(WorkOrder::class);
     }
 
+    /** Availability is measured against the stock of the operator running the vessel. */
     public function isAvailable(): bool
     {
-        return (float) $this->part->stock_qty >= (float) $this->planned_quantity;
+        $operatorId = $this->workOrder?->equipment?->vessel?->operator_id;
+
+        if (! $operatorId) {
+            return false; // no operator assigned means no stock to draw from
+        }
+
+        $held = \App\Models\PartStock::query()
+            ->where('part_id', $this->part_id)
+            ->where('operator_id', $operatorId)
+            ->value('stock_qty');
+
+        return (float) ($held ?? 0) >= (float) $this->planned_quantity;
     }
 }

@@ -67,6 +67,7 @@ class WorkOrderService
                 'status' => WorkOrderStatus::Draft,
                 'priority' => $plan->equipment?->criticality_band?->value,
                 'task_snapshot' => $this->snapshot($task),
+				'operator_id' => $plan->equipment?->vessel?->operator_id,
             ])->save();
 
             $this->copyLines($workOrder, $task);
@@ -90,6 +91,7 @@ class WorkOrderService
             'number' => $this->nextNumber(),
             'status' => WorkOrderStatus::Draft,
             'priority' => $equipment->criticality_band?->value,
+			'operator_id' => $equipment->vessel?->operator_id,
         ])->save();
 
         return $this->refreshBacklogState($workOrder->refresh());

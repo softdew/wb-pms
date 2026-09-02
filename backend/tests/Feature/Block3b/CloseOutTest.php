@@ -158,12 +158,12 @@ class CloseOutTest extends Block3bTestCase
         $plan = $this->makeDuePlan();
         $part = $this->makePart();
         $plan->task->parts()->create(['part_id' => $part->id, 'quantity' => 2]);
-        $this->stock->receive($part, 10);
+        $this->stock->receive($part, $this->operator, 10);
 
         $workOrder = $this->workOrders->release($this->workOrders->raiseFromPlan($plan));
 
         $this->assertSame(1, $this->stock->issueForWorkOrder($workOrder, $this->engineer));
-        $this->assertEquals(8, $part->refresh()->stock_qty);
+        $this->assertEquals(8, $this->stock->stockFor($part, $this->operator)->stock_qty);
         $this->assertSame(1, $workOrder->stockTransactions()->count());
         $this->assertEquals(2, $workOrder->parts()->first()->actual_quantity);
     }

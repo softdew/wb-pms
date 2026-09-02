@@ -16,10 +16,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use App\Models\Concerns\ScopedToOperator;
 
 class Equipment extends Model implements AuditableContract
 {
-    use Auditable, BelongsToOrganisation, HasFactory, SoftDeletes;
+    use Auditable, BelongsToOrganisation, HasFactory, ScopedToOperator, SoftDeletes;
 
     protected $table = 'equipment';
 
@@ -32,6 +33,13 @@ class Equipment extends Model implements AuditableContract
         'hidden_failure_flag', 'status', 'remarks',
     ];
 
+	// Reaches the operator through its vessel. Shore equipment has no vessel,
+    // so it stays department-only and is filtered out for operator users.
+    public function operatorRelationPath(): string
+    {
+        return 'vessel';
+    }
+	
     /**
      * Criticality and strategy are absent from $fillable on purpose. They are
      * only ever written through CriticalityService and MaintenanceStrategyService,
@@ -168,4 +176,19 @@ class Equipment extends Model implements AuditableContract
     {
         return $query->whereNotNull('meter_type');
     }
+	
+	public function maintenancePlans(): HasMany
+	{
+		return $this->hasMany(MaintenancePlan::class);
+	}
+
+	/** Active plan lines in sheet order, for the monthly return. */
+	public function maintenancePlansForExport()
+	{
+		return $this->maintenancePlans()
+			->where('status', MaintenancePlan::STATUS_ACTIVE)
+			->with('task')
+			->get()
+			->sortBy(fn (MaintenancePlan $plan) => $plan->task?->sort_order ?? 0);
+	}
 }

@@ -13,10 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use App\Models\Concerns\ScopedToOperator;
 
 class MaintenancePlan extends Model implements AuditableContract
 {
-    use Auditable, BelongsToOrganisation, HasFactory, SoftDeletes;
+    use Auditable, BelongsToOrganisation, HasFactory, ScopedToOperator, SoftDeletes;
 
     public const STATUS_ACTIVE = 'active';
     public const STATUS_SUSPENDED = 'suspended';
@@ -32,6 +33,11 @@ class MaintenancePlan extends Model implements AuditableContract
         'status', 'remarks',
     ];
 
+	public function operatorRelationPath(): string
+    {
+        return 'equipment.vessel';
+    }
+	
     /**
      * next_due_* and due_status are absent from $fillable on purpose. They are
      * derived values, written only by DueDateService.

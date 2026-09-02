@@ -133,7 +133,7 @@ class WorkOrderLifecycleTest extends Block3bTestCase
         $plan = $this->makeDuePlan();
         $part = $this->makePart();
         $plan->task->parts()->create(['part_id' => $part->id, 'quantity' => 2]);
-        $this->stock->receive($part, 10);
+        $this->stock->receive($part, $this->operator, 10);
 
         $workOrder = $this->workOrders->raiseFromPlan($plan);
 
@@ -145,7 +145,7 @@ class WorkOrderLifecycleTest extends Block3bTestCase
         $plan = $this->makeDuePlan();
         $part = $this->makePart();
         $plan->task->parts()->create(['part_id' => $part->id, 'quantity' => 5]);
-        $this->stock->receive($part, 1);
+        $this->stock->receive($part, $this->operator, 1);
 
         $workOrder = $this->workOrders->raiseFromPlan($plan);
 

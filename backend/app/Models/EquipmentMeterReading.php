@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\MeterType;
 use App\Models\Concerns\BelongsToOrganisation;
+use App\Models\Concerns\ScopedToOperator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +23,11 @@ class EquipmentMeterReading extends Model
         'is_reset', 'previous_value', 'recorded_by', 'remarks',
     ];
 
+	public function operatorRelationPath(): string
+    {
+        return 'equipment.vessel';
+    }
+	
     protected function casts(): array
     {
         return [

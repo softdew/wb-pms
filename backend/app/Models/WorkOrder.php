@@ -7,6 +7,7 @@ use App\Enums\ExecutingEntity;
 use App\Enums\WorkOrderStatus;
 use App\Enums\WorkOrderType;
 use App\Models\Concerns\BelongsToOrganisation;
+use App\Models\Concerns\ScopedToOperator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,16 +20,26 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 class WorkOrder extends Model implements AuditableContract
 {
-    use Auditable, BelongsToOrganisation, HasFactory, SoftDeletes;
+    use Auditable, BelongsToOrganisation, HasFactory, ScopedToOperator, SoftDeletes;
 
     protected $fillable = [
         'equipment_id', 'maintenance_plan_id', 'checklist_task_id',
         'type', 'description', 'priority', 'executing_entity',
         'assigned_to', 'vendor_id', 'permit_reference',
         'due_on', 'due_meter_reading', 'estimated_hours', 'estimated_cost',
-        'remarks',
+        'remarks', 'operator_id'
     ];
 
+	public function operatorRelationPath(): string
+    {
+        return 'equipment.vessel';
+    }
+	
+	public function operator(): BelongsTo
+    {
+        return $this->belongsTo(Operator::class);
+    }
+	
     /**
      * number, status, backlog_state and the completion fields are absent from
      * $fillable. They are written only by WorkOrderService, which enforces the

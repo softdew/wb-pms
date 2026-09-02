@@ -6,23 +6,27 @@ use App\Models\Concerns\BelongsToOrganisation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * The department's parts catalogue: what a thing is, not how many anyone has.
+ *
+ * Operators read this and cannot add to it. Quantities live in part_stocks,
+ * one row per operator, because spares are on the contractor's account.
+ */
 class Part extends Model
 {
     use BelongsToOrganisation, HasFactory;
 
     protected $fillable = [
         'code', 'name', 'part_category_id', 'oem_reference', 'uom',
-        'unit_cost', 'stock_qty', 'reorder_level', 'lead_time_days',
-        'location_id', 'image_path', 'remarks', 'is_active',
+        'unit_cost', 'lead_time_days', 'image_path', 'remarks', 'is_active',
     ];
 
     protected function casts(): array
     {
         return [
             'unit_cost' => 'decimal:2',
-            'stock_qty' => 'decimal:3',
-            'reorder_level' => 'decimal:3',
             'is_active' => 'boolean',
         ];
     }
@@ -32,14 +36,22 @@ class Part extends Model
         return $this->belongsTo(PartCategory::class, 'part_category_id');
     }
 
-    public function location(): BelongsTo
+    public function stocks(): HasMany
     {
-        return $this->belongsTo(Location::class);
+        return $this->hasMany(PartStock::class);
     }
 
-    public function isBelowReorderLevel(): bool
+    /** This part's holding for one operator, or null if they hold none. */
+    public function stockFor(Operator|int $operator): ?PartStock
     {
-        return $this->reorder_level !== null
-            && (float) $this->stock_qty <= (float) $this->reorder_level;
+        return $this->stocks()
+            ->where('operator_id', $operator instanceof Operator ? $operator->id : $operator)
+            ->first();
+    }
+
+    /** Total across every operator. The department's view. */
+    public function totalStock(): float
+    {
+        return (float) $this->stocks()->sum('stock_qty');
     }
 }

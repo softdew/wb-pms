@@ -19,7 +19,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'organisation_id', 'name', 'employee_code', 'trade_id',
-        'email', 'password', 'status',
+        'email', 'password', 'status', 'operator_id'
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -43,4 +43,16 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Trade::class);
     }
+	
+	public function operator(): BelongsTo
+	{
+		return $this->belongsTo(Operator::class);
+	}
+
+	/** True for the operating company's shared login. */
+	public function isOperator(): bool
+	{
+		return $this->operator_id !== null;
+	}
+
 }

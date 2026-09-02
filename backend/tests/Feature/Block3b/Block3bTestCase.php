@@ -17,6 +17,7 @@ use App\Support\Tenancy;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Models\Operator;
 
 abstract class Block3bTestCase extends TestCase
 {
@@ -27,6 +28,8 @@ abstract class Block3bTestCase extends TestCase
     protected User $engineer;
 
     protected Vessel $vessel;
+	
+	protected Operator $operator;
 
     protected EquipmentCategory $category;
 
@@ -46,7 +49,20 @@ abstract class Block3bTestCase extends TestCase
         ]);
 
         $shipType = ShipType::create(['code' => 'FERRY', 'name' => 'Passenger Ferry']);
-        $this->vessel = Vessel::create(['ship_type_id' => $shipType->id, 'code' => 'MV01', 'name' => 'MV Sagarika']);
+		
+		$this->operator = Operator::create([
+            'code' => 'COOP1',
+            'name' => 'Test Cooperative Society',
+            'type' => 'cooperative_society',
+        ]);
+		
+        $this->vessel = Vessel::create([
+            'ship_type_id' => $shipType->id,
+            'operator_id' => $this->operator->id,
+            'code' => 'MV01',
+            'name' => 'MV Sagarika',
+        ]);
+		
         $this->category = EquipmentCategory::firstWhere('code', 'ME');
     }
 
