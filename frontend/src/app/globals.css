@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/*
+ * Admiralty chart palette.
+ *
+ * Deep water through shoal to land, with the chart's own convention for
+ * hazards: magenta rather than red.
+ *
+ * A real chart is not drab. Its magenta is vivid, its cyan is clean, and the
+ * paper is bright. An earlier pass muted all three past calm and into grey, so
+ * these are saturated back up and the contrast ladder now runs from true white
+ * to near-black rather than sitting between 30 and 70 per cent.
+ */
+@theme {
+  /* Deep water. The rail runs a gradient between these two. */
+  --color-ink: #06202C;
+  --color-ink-lift: #0C3040;
+  --color-ink-deep: #041721;
+
+  --color-ink-70: rgba(6, 32, 44, 0.70);
+  --color-ink-45: rgba(6, 32, 44, 0.48);
+  --color-ink-22: rgba(6, 32, 44, 0.22);
+  --color-ink-12: rgba(6, 32, 44, 0.12);
+  --color-ink-06: rgba(6, 32, 44, 0.06);
+
+  --color-paper: #EDF2F1;
+  --color-shoal: #9FD8DE;      /* bright enough to read as an accent on ink */
+  --color-shoal-deep: #4FA8B4;
+  --color-shoal-soft: #E2EFEF;
+  --color-land: #E8D9B4;
+
+  /* Chart hazard magenta, chart caution, safe water. */
+  --color-danger: #DB0A66;
+  --color-caution: #CC7A00;
+  --color-safe: #168A63;
+
+  --color-danger-soft: #FCE0EC;
+  --color-caution-soft: #FAEBD3;
+  --color-safe-soft: #DFF1E9;
+
+  --font-sans: var(--font-barlow), system-ui, sans-serif;
+  --font-cond: var(--font-barlow-condensed), var(--font-barlow), sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* Hours and readings sit in columns throughout; they must align. */
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3, th, .cond {
+  font-family: var(--font-cond);
+}
+
+/*
+ * The rail is lit from the top, like water shallowing towards the surface.
+ * A flat fill across 236px is what made it read as a grey slab.
+ */
+.rail-surface {
+  background:
+    radial-gradient(120% 55% at 18% 0%, rgba(79, 168, 180, 0.22) 0%, transparent 62%),
+    linear-gradient(180deg, var(--color-ink-lift) 0%, var(--color-ink) 38%, var(--color-ink-deep) 100%);
+}
+
+/* A hairline of light where the rail meets the content. */
+.rail-edge {
+  box-shadow: inset -1px 0 0 rgba(159, 216, 222, 0.14);
+}
+
+/* Same treatment on the sounding panel, so the two dark surfaces agree. */
+.deep-surface {
+  background:
+    radial-gradient(90% 120% at 8% 0%, rgba(79, 168, 180, 0.20) 0%, transparent 58%),
+    linear-gradient(140deg, var(--color-ink-lift) 0%, var(--color-ink) 46%, var(--color-ink-deep) 100%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
+}

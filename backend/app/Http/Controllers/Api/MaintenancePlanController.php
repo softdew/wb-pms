@@ -23,10 +23,19 @@ class MaintenancePlanController extends ApiController
 
     public function index(Request $request): JsonResponse
     {
-        $query = MaintenancePlan::query()->with(['equipment:id,code,name', 'task:id,code,activity_description,section,sort_order']);
+        $query = MaintenancePlan::query()
+            ->with([
+                'equipment:id,code,name,vessel_id,current_meter_reading,meter_type',
+                'equipment.vessel:id,code,name',
+                'task:id,code,activity_description,section,sort_order,controlling_reference',
+            ]);
 
         if ($equipment = $request->integer('equipment_id')) {
             $query->where('equipment_id', $equipment);
+        }
+
+        if ($vessel = $request->integer('vessel_id')) {
+            $query->whereHas('equipment', fn ($q) => $q->where('vessel_id', $vessel));
         }
 
         if ($status = $request->string('due_status')->value()) {
@@ -37,12 +46,29 @@ class MaintenancePlanController extends ApiController
             $query->active();
         }
 
-        return $this->ok($query->orderBy('next_due_on')->paginate(min($request->integer('per_page', 50), 200)));
+        $plans = $query->orderBy('next_due_on')
+            ->paginate(min($request->integer('per_page', 50), 500));
+
+        // How far through its interval each task is. Computed rather than
+        // stored, because it moves with every meter reading -- and the fleet
+        // view is unreadable without it.
+        $plans->getCollection()->transform(function (MaintenancePlan $plan) {
+            $plan->setAttribute('interval_value', $plan->effectiveIntervalValue());
+            $plan->setAttribute('interval_label', $plan->intervalLabel());
+            $plan->setAttribute('consumed', $this->dueDates->consumedSinceCompletion($plan));
+            $plan->setAttribute('remaining', $this->dueDates->remaining($plan));
+            $plan->setAttribute('is_meter_based', $plan->isMeterBased());
+
+            return $plan;
+        });
+
+        return $this->ok($plans);
     }
 
     public function show(int $id): JsonResponse
     {
-        $plan = MaintenancePlan::with(['equipment', 'task.readings', 'task.parts.part'])->findOrFail($id);
+        $plan = MaintenancePlan::with(['equipment.vessel', 'task.readings', 'task.parts.part'])
+            ->findOrFail($id);
 
         return $this->ok([
             'plan' => $plan,
@@ -50,7 +76,6 @@ class MaintenancePlanController extends ApiController
         ]);
     }
 
-    /** Apply one library task to one asset. */
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -98,10 +123,6 @@ class MaintenancePlanController extends ApiController
         return $this->ok($plan, 201);
     }
 
-    /**
-     * Apply the whole category library to an asset. The bulk action that makes
-     * onboarding a vessel a morning rather than a week.
-     */
     public function applyLibrary(Request $request, int $equipmentId): JsonResponse
     {
         $created = $this->plans->applyCategoryLibrary(Equipment::findOrFail($equipmentId));
