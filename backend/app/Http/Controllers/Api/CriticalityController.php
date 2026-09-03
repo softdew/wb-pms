@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\CriticalityAssessment;
+use App\Models\CriticalityScalePoint;
+use App\Models\CriticalitySetting;
 use App\Models\Equipment;
 use App\Services\CriticalityService;
 use Illuminate\Http\JsonResponse;
@@ -10,8 +12,8 @@ use Illuminate\Http\Request;
 
 /**
  * Scoring and approval are separate endpoints on purpose. The service refuses
- * an approval by the person who scored it, so the split is enforced rather than
- * merely encouraged by the interface.
+ * an approval by the person who scored it, so the split is enforced rather
+ * than merely encouraged by the interface.
  */
 class CriticalityController extends ApiController
 {
@@ -19,14 +21,46 @@ class CriticalityController extends ApiController
     {
     }
 
+    /**
+     * The anchored scales and the band thresholds, for the scoring form.
+     *
+     * Sent as data rather than hard-coded in the client, because the anchors
+     * are the organisation's own words and it may recalibrate them.
+     */
+    public function scales(): JsonResponse
+    {
+        $points = CriticalityScalePoint::query()
+            ->orderBy('factor')
+            ->orderBy('value')
+            ->get(['factor', 'value', 'label', 'anchor']);
+
+        $settings = CriticalitySetting::first();
+
+        return $this->ok([
+            'factors' => [
+                'C' => $points->where('factor', 'C')->values(),
+                'E' => $points->where('factor', 'E')->values(),
+                'R' => $points->where('factor', 'R')->values(),
+            ],
+            'thresholds' => [
+                'high' => $settings?->high_threshold ?? 30,
+                'medium' => $settings?->medium_threshold ?? 12,
+            ],
+        ]);
+    }
+
     public function pending(): JsonResponse
     {
         return $this->ok(
             CriticalityAssessment::query()
                 ->pending()
-                ->with(['equipment:id,code,name', 'assessor:id,name'])
+                ->with([
+                    'equipment:id,code,name,vessel_id,criticality_band',
+                    'equipment.vessel:id,code,name',
+                    'assessor:id,name',
+                ])
                 ->orderBy('created_at')
-                ->paginate(25)
+                ->paginate(50)
         );
     }
 
@@ -85,9 +119,25 @@ class CriticalityController extends ApiController
         ));
     }
 
-    /** Band spread across the register, for calibrating the thresholds. */
+    /**
+     * Band spread across the register. The High band is normally expected to
+     * hold 10 to 20 per cent; a figure far outside that says the anchors need
+     * revisiting, not the assets.
+     */
     public function distribution(): JsonResponse
     {
         return $this->ok($this->criticality->bandDistribution());
+    }
+
+    /** Equipment with no approved band yet — the work still to do. */
+    public function unassessed(): JsonResponse
+    {
+        return $this->ok(
+            Equipment::query()
+                ->awaitingCriticality()
+                ->with(['vessel:id,code,name', 'category:id,code,name'])
+                ->orderBy('code')
+                ->paginate(50)
+        );
     }
 }

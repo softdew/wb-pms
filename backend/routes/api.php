@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\WorkOrderController;
 use App\Support\Permissions as P;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\FailureCodeController;
+use App\Http\Controllers\Api\OperatorController;
 
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
@@ -39,10 +40,22 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
         Route::get('equipment/{equipment}', [EquipmentController::class, 'show']);
         Route::get('equipment/{equipment}/meter-readings', [EquipmentController::class, 'meterReadings']);
         Route::get('equipment/{equipment}/criticality', [CriticalityController::class, 'history']);
+		Route::get('criticality/scales', [CriticalityController::class, 'scales']);
+        Route::get('criticality/unassessed', [CriticalityController::class, 'unassessed']);
         Route::get('criticality/pending', [CriticalityController::class, 'pending']);
         Route::get('criticality/distribution', [CriticalityController::class, 'distribution']);
+		Route::get('operators', [OperatorController::class, 'index']);
+        Route::get('operators/{operator}', [OperatorController::class, 'show']);
     });
 
+	Route::middleware('permission:'.P::MANAGE_OPERATORS)->group(function () {
+        Route::post('operators', [OperatorController::class, 'store']);
+        Route::put('operators/{operator}', [OperatorController::class, 'update']);
+        Route::post('operators/{operator}/login', [OperatorController::class, 'issueLogin']);
+        Route::post('operators/{operator}/suspend', [OperatorController::class, 'suspend']);
+        Route::post('operators/{operator}/reinstate', [OperatorController::class, 'reinstate']);
+    });
+	
     Route::middleware('permission:'.P::VIEW_PLANS)->group(function () {
         Route::get('maintenance-plans', [MaintenancePlanController::class, 'index']);
         Route::get('maintenance-plans/{plan}', [MaintenancePlanController::class, 'show']);

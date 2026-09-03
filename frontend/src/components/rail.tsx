@@ -71,6 +71,7 @@ function groupsFor(user: CurrentUser, counts: RailCounts): Group[] {
       items: [
         { href: '/vessels', label: 'Vessels', icon: IconVessel, count: counts.vessels },
         { href: '/equipment', label: 'Equipment', icon: IconEquipment },
+		{ href: '/criticality', label: 'Criticality', icon: IconScale },
         { href: '/plans', label: 'Maintenance plans', icon: IconSchedule, count: counts.plans },
       ],
     },
