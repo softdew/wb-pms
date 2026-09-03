@@ -87,6 +87,20 @@ export default async function VesselPage({ params }: { params: Promise<{ id: str
               </dd>
             </div>
           </dl>
+		  <div className="ml-auto flex gap-2 pb-0.5">
+            <Link
+              href={`/vessels/${vessel.id}/assign`}
+              className="rounded-md border border-ink-22 bg-white px-4 py-2 text-sm font-medium hover:bg-shoal-soft"
+            >
+              {vessel.operator_id ? 'Transfer' : 'Assign operator'}
+            </Link>
+            <Link
+              href={`/vessels/${vessel.id}/edit`}
+              className="rounded-md border border-ink-22 bg-white px-4 py-2 text-sm font-medium hover:bg-shoal-soft"
+            >
+              Edit
+            </Link>
+          </div>
         </div>
 
         <nav className="mt-4 flex gap-0.5" aria-label="Vessel sections">

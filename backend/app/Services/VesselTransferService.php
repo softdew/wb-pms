@@ -176,6 +176,12 @@ class VesselTransferService
             ->get();
     }
 
+	/** The position right now: readings, open work and overdue tasks. */
+    public function positionSnapshot(Vessel $vessel): array
+    {
+        return $this->positionAt($vessel);
+    }
+	
     /**
      * The position at this moment: readings, open work and overdue tasks.
      * Read unscoped, because the department records the handover and must see

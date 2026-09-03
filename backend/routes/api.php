@@ -14,6 +14,9 @@ use App\Support\Permissions as P;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\FailureCodeController;
 use App\Http\Controllers\Api\OperatorController;
+use App\Http\Controllers\Api\VesselAssignmentController;
+use App\Http\Controllers\Api\EquipmentCategoryController;
+use App\Http\Controllers\Api\EquipmentModelController;
 
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
@@ -29,13 +32,22 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
         Route::get('locations/{location}', [LocationController::class, 'show']);
         Route::get('checklist-tasks', [ChecklistTaskController::class, 'index']);
         Route::get('checklist-tasks/{checklist_task}', [ChecklistTaskController::class, 'show']);
+		
+		Route::get('equipment-categories', [EquipmentCategoryController::class, 'index']);
+        Route::get('equipment-categories/{equipment_category}', [EquipmentCategoryController::class, 'show']);
+        Route::get('equipment-models', [EquipmentModelController::class, 'index']);
+        Route::get('equipment-models/{equipment_model}', [EquipmentModelController::class, 'show']);
     });
 
     Route::middleware('permission:'.P::VIEW_FLEET)->group(function () {
         Route::get('vessels', [VesselController::class, 'index']);
         Route::get('vessels/{vessel}', [VesselController::class, 'show']);
 		Route::get('vessels/{vessel}/overview', [VesselController::class, 'overview']);
-        Route::get('vessels/{vessel}/history', [VesselController::class, 'history']);
+        
+		
+		Route::get('vessels/{vessel}/history', [VesselAssignmentController::class, 'history']);
+        Route::get('vessels/{vessel}/assignment', [VesselAssignmentController::class, 'preview']);
+		
         Route::get('equipment', [EquipmentController::class, 'index']);
         Route::get('equipment/{equipment}', [EquipmentController::class, 'show']);
         Route::get('equipment/{equipment}/meter-readings', [EquipmentController::class, 'meterReadings']);
@@ -79,6 +91,8 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
     Route::middleware('permission:'.P::MANAGE_MASTERS)->group(function () {
         Route::apiResource('ship-types', ShipTypeController::class)->except(['index', 'show']);
         Route::apiResource('locations', LocationController::class)->except(['index', 'show']);
+		Route::apiResource('equipment-categories', EquipmentCategoryController::class)->except(['index', 'show']);
+        Route::apiResource('equipment-models', EquipmentModelController::class)->except(['index', 'show']);
     });
 
     Route::middleware('permission:'.P::MANAGE_TASK_LIBRARY)->group(function () {
@@ -88,6 +102,9 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
     Route::middleware('permission:'.P::MANAGE_FLEET)->group(function () {
         Route::apiResource('vessels', VesselController::class)->except(['index', 'show']);
         Route::apiResource('equipment', EquipmentController::class)->except(['index', 'show']);
+		
+		Route::post('vessels/{vessel}/assignment', [VesselAssignmentController::class, 'store']);
+        Route::post('vessels/{vessel}/incharge', [VesselAssignmentController::class, 'assignIncharge']);
     });
 
     // -- criticality: scoring and approval are separate permissions ----------

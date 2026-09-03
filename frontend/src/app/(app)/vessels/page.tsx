@@ -1,9 +1,7 @@
 import Link from 'next/link';
-import { Empty } from '@/components/empty';
-import { PageHeader } from '@/components/page-header';
 import { VesselStatusBadge } from '@/components/status';
 import { get } from '@/lib/api';
-import { isOperator, requireUser } from '@/lib/auth';
+import { hasRole, isOperator, requireUser } from '@/lib/auth';
 import { date } from '@/lib/format';
 import type { Paginated, Vessel } from '@/types/api';
 
@@ -19,13 +17,35 @@ export default async function VesselsPage({
   // currently assigned to it, so there is no filtering to do here.
   const vessels = await get<Paginated<Vessel>>('/vessels', { search, per_page: 50 });
 
+  const canManage = hasRole(user, 'department-admin', 'planner');
+  // A vessel nobody operates cannot be worked on, so it is worth flagging.
+  const unassigned = vessels.data.filter((vessel) => !vessel.operator_id).length;
+
   return (
     <>
-      <PageHeader
-        title={isOperator(user) ? 'Our vessels' : 'Vessels'}
-        crumb="Fleet"
-        meta={[{ label: 'In the register', value: String(vessels.total) }]}
-      />
+      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+        <p className="text-[13px] text-ink-45">Fleet</p>
+        <div className="flex flex-wrap items-end gap-6">
+          <h1 className="text-[29px] leading-tight font-semibold">
+            {isOperator(user) ? 'Our vessels' : 'Vessels'}
+          </h1>
+          <p className="pb-1.5 text-[13px] text-ink-45">
+            {vessels.total} in the register
+            {unassigned > 0 ? (
+              <span className="text-caution"> · {unassigned} not assigned to an operator</span>
+            ) : null}
+          </p>
+
+          {canManage ? (
+            <Link
+              href="/vessels/new"
+              className="ml-auto rounded-md bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#0C3040]"
+            >
+              Add vessel
+            </Link>
+          ) : null}
+        </div>
+      </header>
 
       <div className="px-7 py-6">
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
@@ -43,10 +63,24 @@ export default async function VesselsPage({
           </div>
 
           {vessels.data.length === 0 ? (
-            <Empty
-              title={search ? 'No vessel matches that search.' : 'No vessels in the register yet.'}
-              action={search ? 'Try a shorter search term.' : 'Add a vessel to begin.'}
-            />
+            <div className="px-6 py-12 text-center">
+              <p className="font-cond text-lg font-semibold">
+                {search ? 'No vessel matches that search.' : 'No vessels in the register yet.'}
+              </p>
+              <p className="mt-1 text-sm text-ink-45">
+                {search
+                  ? 'Try a shorter search term.'
+                  : 'The department owns the vessels; who operates each one is recorded separately.'}
+              </p>
+              {!search && canManage ? (
+                <Link
+                  href="/vessels/new"
+                  className="mt-4 inline-block rounded-md bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-[#0C3040]"
+                >
+                  Add the first vessel
+                </Link>
+              ) : null}
+            </div>
           ) : (
             <table className="w-full">
               <thead>
@@ -82,7 +116,7 @@ export default async function VesselsPage({
                       {vessel.incharge?.name ?? <span className="text-ink-45">—</span>}
                     </td>
                     <td className="px-3.5 py-2.5 align-baseline text-ink-70">
-                      {date(null)}
+                      {date(vessel.commission_date)}
                     </td>
                     <td className="px-3.5 py-2.5 align-baseline">
                       <VesselStatusBadge status={vessel.status} />
