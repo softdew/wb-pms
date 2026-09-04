@@ -22,7 +22,8 @@ class WorkOrderController extends ApiController
 
     public function index(Request $request): JsonResponse
     {
-        $query = WorkOrder::query()->with(['equipment:id,code,name', 'assignee:id,name', 'vendor:id,code,name']);
+        $query = WorkOrder::query()
+            ->with(['equipment:id,code,name,vessel_id', 'assignee:id,name', 'vendor:id,code,name']);
 
         if ($status = $request->string('status')->value()) {
             $query->where('status', $status);
@@ -42,6 +43,12 @@ class WorkOrderController extends ApiController
 
         if ($equipment = $request->integer('equipment_id')) {
             $query->where('equipment_id', $equipment);
+        }
+
+        // Everything fitted to one vessel. The relation is the only route --
+        // a work order names equipment, and equipment names the vessel.
+        if ($vessel = $request->integer('vessel_id')) {
+            $query->whereHas('equipment', fn ($q) => $q->where('vessel_id', $vessel));
         }
 
         return $this->ok($query->orderByDesc('due_on')->paginate(min($request->integer('per_page', 25), 100)));

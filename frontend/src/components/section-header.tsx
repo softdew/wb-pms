@@ -10,7 +10,7 @@ type Tone = 'shoal' | 'caution' | 'danger' | 'safe' | 'land';
  * 2.6:1, which is fine behind an icon and not fine for words.
  */
 const look: Record<Tone, { disc: string; title: string }> = {
-  shoal: { disc: 'bg-shoal-soft text-shoal-deep', title: 'text-shoal-ink' },
+  shoal: { disc: 'bg-shoal-soft text-shoal-ink', title: 'text-shoal-ink' },
   caution: { disc: 'bg-caution-soft text-caution', title: 'text-caution' },
   danger: { disc: 'bg-danger-soft text-danger', title: 'text-danger' },
   safe: { disc: 'bg-safe-soft text-safe', title: 'text-safe' },

@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconIncharge, IconVessel } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { notFound } from 'next/navigation';
 import { OperatorAdmin } from '@/components/operator-admin';
 import { ApiError } from '@/lib/api';
@@ -27,7 +29,7 @@ export default async function OperatorPage({ params }: { params: Promise<{ id: s
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="mb-1.5 text-[13px] text-ink-45">
           <Link href="/operators" className="hover:underline">
             Operating companies
@@ -75,13 +77,14 @@ export default async function OperatorPage({ params }: { params: Promise<{ id: s
         </div>
       </header>
 
-      <div className="grid gap-5 px-7 py-6 xl:grid-cols-[1fr_360px]">
+      <div className="grid gap-6 px-7 py-7 xl:grid-cols-[1fr_360px]">
         <div className="space-y-5">
           <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-            <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-              <h2 className="text-[17px] font-semibold">Vessels held</h2>
-              <p className="text-[13px] text-ink-45">{vessels.length}</p>
-            </div>
+            <SectionHeader
+              icon={IconVessel}
+              title="Vessels held"
+              hint={`${vessels.length} under this agreement`}
+            />
 
             {vessels.length === 0 ? (
               <p className="px-6 py-10 text-center text-sm text-ink-45">
@@ -127,15 +130,19 @@ export default async function OperatorPage({ params }: { params: Promise<{ id: s
           </section>
 
           <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-            <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-              <h2 className="text-[17px] font-semibold">Vessel in-charges</h2>
-              <p className="text-[13px] text-ink-45">
-                {incharges.length} on record
-                {lapsed.length > 0 ? (
-                  <span className="text-caution"> · {lapsed.length} with a lapsed licence</span>
-                ) : null}
-              </p>
-            </div>
+            <SectionHeader
+              icon={IconIncharge}
+              tone={lapsed.length > 0 ? 'caution' : 'shoal'}
+              title="Vessel in-charges"
+              hint={
+                <>
+                  {incharges.length} on record
+                  {lapsed.length > 0 ? (
+                    <span className="text-caution"> · {lapsed.length} with a lapsed licence</span>
+                  ) : null}
+                </>
+              }
+            />
 
             {incharges.length === 0 ? (
               <p className="px-6 py-10 text-center text-sm text-ink-45">

@@ -1,4 +1,6 @@
 import type { Distribution } from '@/lib/criticality';
+import { IconScale } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 
 /**
  * The spread across the register.
@@ -16,12 +18,11 @@ export function BandDistribution({ distribution }: { distribution: Distribution 
 
   return (
     <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-      <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-        <h2 className="text-[17px] font-semibold">Band distribution</h2>
-        <p className="text-[13px] text-ink-45">
-          {assessed} of {distribution.total} items assessed
-        </p>
-      </div>
+      <SectionHeader
+        icon={IconScale}
+        title="Band distribution"
+        hint={`${assessed} of ${distribution.total} items assessed`}
+      />
 
       <div className="px-5 py-4">
         {assessed === 0 ? (

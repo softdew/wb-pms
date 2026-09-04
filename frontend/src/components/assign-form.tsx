@@ -47,7 +47,7 @@ export function AssignForm({ preview }: { preview: AssignmentPreview }) {
       {transferring ? (
         <section className="overflow-hidden rounded-lg border border-caution/30 bg-caution-soft">
           <div className="border-b border-caution/20 px-5 py-3">
-            <h2 className="text-[17px] font-semibold text-caution">
+            <h2 className="font-cond text-[19px] font-semibold text-caution">
               Handing over from {preview.current_operator!.name}
             </h2>
             <p className="text-[13px] text-ink-70">
@@ -117,7 +117,7 @@ export function AssignForm({ preview }: { preview: AssignmentPreview }) {
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">
             {transferring ? 'Taking over' : 'Operator'}
           </h2>
         </div>

@@ -45,7 +45,7 @@ export function OperatorAdmin({
   return (
     <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
       <div className="border-b border-ink-12 px-5 py-3">
-        <h2 className="text-[17px] font-semibold">Administration</h2>
+        <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Administration</h2>
       </div>
 
       <div className="space-y-4 px-5 py-4">

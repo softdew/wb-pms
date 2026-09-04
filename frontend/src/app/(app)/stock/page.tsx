@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconStock } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { isOperator, requireUser } from '@/lib/auth';
 import { loadStock } from '@/lib/parts';
 
@@ -11,11 +13,11 @@ export default async function StockPage() {
   if (!stock) {
     return (
       <>
-        <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+        <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
           <p className="text-[13px] text-ink-45">Stores</p>
           <h1 className="text-[29px] leading-tight font-semibold">Stock</h1>
         </header>
-        <div className="px-7 py-6">
+        <div className="px-7 py-7">
           <p className="rounded-lg border border-ink-12 bg-white px-6 py-10 text-center text-sm text-ink-45">
             Stock is unavailable for this account.
           </p>
@@ -26,7 +28,7 @@ export default async function StockPage() {
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Stores</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">
@@ -51,11 +53,17 @@ export default async function StockPage() {
         ) : null}
       </header>
 
-      <div className="px-7 py-6">
+      <div className="px-7 py-7">
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">On hand</h2>
-          </div>
+          <SectionHeader
+            icon={IconStock}
+            title="On hand"
+            hint={
+              operator
+                ? 'What we are holding.'
+                : 'One row per part, one column per operating company.'
+            }
+          />
 
           {stock.rows.length === 0 ? (
             <div className="px-6 py-12 text-center">

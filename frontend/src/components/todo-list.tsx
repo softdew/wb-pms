@@ -53,7 +53,10 @@ export function TodoList({
 
   if (rows.length === 0) {
     return (
-      <section className="flex flex-wrap items-center gap-3 rounded-lg border border-safe/25 bg-safe-soft px-5 py-3.5">
+      <section
+        id="needs-doing"
+        className="flex flex-wrap items-center gap-3 rounded-lg border border-safe/25 bg-safe-soft px-5 py-3.5"
+      >
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -74,7 +77,7 @@ export function TodoList({
   }
 
   return (
-    <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
+    <section id="needs-doing" className="overflow-hidden rounded-lg border border-ink-12 bg-white">
       <SectionHeader
         icon={IconOverdue}
         tone="caution"

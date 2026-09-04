@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconWorkOrder } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { BacklogPipeline, type BacklogData } from '@/components/backlog-pipeline';
 import { requireUser } from '@/lib/auth';
 import { backlogLabel, date } from '@/lib/format';
@@ -41,7 +43,7 @@ export default async function WorkOrdersPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Today</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">Work orders</h1>
@@ -49,13 +51,17 @@ export default async function WorkOrdersPage({
         </div>
       </header>
 
-      <div className="space-y-5 px-7 py-6">
+      <div className="space-y-6 px-7 py-7">
         {backlog ? <BacklogPipeline backlog={backlog as BacklogData} active={backlog_state} /> : null}
 
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex flex-wrap items-center gap-2 border-b border-ink-12 px-4.5 py-3">
-            <h2 className="mr-2 text-[17px] font-semibold">Jobs</h2>
-            {filters.map((filter) => {
+          <SectionHeader
+            icon={IconWorkOrder}
+            title="Jobs"
+            hint={`${orders.total} matching`}
+            action={
+              <div className="flex flex-wrap items-center gap-2">
+                {filters.map((filter) => {
               const active = (status ?? '') === filter.key && !backlog_state;
 
               return (
@@ -68,11 +74,13 @@ export default async function WorkOrdersPage({
                       : 'border-ink-22 text-ink-70 hover:bg-shoal-soft'
                   }`}
                 >
-                  {filter.label}
-                </Link>
-              );
-            })}
-          </div>
+                      {filter.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            }
+          />
 
           {orders.data.length === 0 ? (
             <div className="px-6 py-12 text-center">

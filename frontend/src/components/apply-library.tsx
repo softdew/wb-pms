@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from 'react';
 import { applyLibrary } from '@/actions/tasks';
+import { IconLibrary } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import type { LibraryPreview } from '@/lib/task-types';
 import { triggerClassLabel } from '@/lib/task-types';
 
@@ -26,7 +28,7 @@ export function ApplyLibrary({ preview }: { preview: LibraryPreview }) {
   if (applied !== null) {
     return (
       <section className="overflow-hidden rounded-lg border border-safe/30 bg-safe-soft px-5 py-5">
-        <h2 className="text-[17px] font-semibold text-safe">
+        <h2 className="font-cond text-[19px] font-semibold text-safe">
           {applied} {applied === 1 ? 'task' : 'tasks'} applied to {equipment.name}
         </h2>
         <p className="mt-1 text-[13.5px] text-ink-70">
@@ -72,18 +74,19 @@ export function ApplyLibrary({ preview }: { preview: LibraryPreview }) {
       ) : null}
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-        <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">
-            {equipment.category?.name ?? 'No category'} library
-          </h2>
-          <p className="text-[13px] text-ink-45">
-            {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
-            {existing.length > 0 ? ` · ${existing.length} already applied` : ''}
-            {blocked.length > 0 ? (
-              <span className="text-caution"> · {blocked.length} cannot apply</span>
-            ) : null}
-          </p>
-        </div>
+        <SectionHeader
+          icon={IconLibrary}
+          title={`${equipment.category?.name ?? 'No category'} library`}
+          hint={
+            <>
+              {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
+              {existing.length > 0 ? ` · ${existing.length} already applied` : ''}
+              {blocked.length > 0 ? (
+                <span className="text-caution"> · {blocked.length} cannot apply</span>
+              ) : null}
+            </>
+          }
+        />
 
         {tasks.length === 0 ? (
           <div className="px-6 py-10 text-center">

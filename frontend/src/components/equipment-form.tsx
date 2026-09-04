@@ -117,7 +117,7 @@ export function EquipmentForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Where it is fitted</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Where it is fitted</h2>
           <p className="text-[13px] text-ink-45">
             An item on neither a vessel nor a shore location cannot be found, planned or
             worked on, so one is required.
@@ -195,7 +195,7 @@ export function EquipmentForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">The item</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">The item</h2>
         </div>
 
         <div className="grid gap-4 px-5 py-4 sm:grid-cols-2">
@@ -280,7 +280,7 @@ export function EquipmentForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Where it sits in the hierarchy</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Where it sits in the hierarchy</h2>
           <p className="text-[13px] text-ink-45">
             Most items stop at equipment unit. Go deeper only where failure is attributed
             at that level.
@@ -335,7 +335,7 @@ export function EquipmentForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Meter</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Meter</h2>
           <p className="text-[13px] text-ink-45">
             Without a meter, only calendar, condition, event and statutory tasks can be
             planned against it.
@@ -383,7 +383,7 @@ export function EquipmentForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Register details</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Register details</h2>
         </div>
 
         <div className="grid gap-4 px-5 py-4 sm:grid-cols-2">

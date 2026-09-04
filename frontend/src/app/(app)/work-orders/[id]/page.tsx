@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconCode, IconGauge } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { notFound } from 'next/navigation';
 import { CloseOutForm } from '@/components/close-out-form';
 import { ReadingCapture } from '@/components/reading-capture';
@@ -38,7 +40,7 @@ export default async function WorkOrderPage({ params }: { params: Promise<{ id: 
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="mb-1.5 text-[13px] text-ink-45">
           <Link href="/work-orders" className="hover:underline">
             Work orders
@@ -91,16 +93,15 @@ export default async function WorkOrderPage({ params }: { params: Promise<{ id: 
         </div>
       </header>
 
-      <div className="grid gap-5 px-7 py-6 xl:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 px-7 py-7 xl:grid-cols-[1fr_320px]">
         <div className="space-y-5">
           {workOrder.readings.length > 0 ? (
             <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-              <div className="border-b border-ink-12 px-4.5 py-3">
-                <h2 className="text-[17px] font-semibold">Readings</h2>
-                <p className="text-[13px] text-ink-45">
-                  Judged against the limits the task carried when this job was raised.
-                </p>
-              </div>
+              <SectionHeader
+                icon={IconGauge}
+                title="Readings"
+                hint="Judged against the limits the task carried when this job was raised."
+              />
               <table className="w-full">
                 <tbody>
                   {workOrder.readings.map((reading) => (
@@ -118,12 +119,12 @@ export default async function WorkOrderPage({ params }: { params: Promise<{ id: 
 
           {workOrder.closeout ? (
             <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-              <div className="border-b border-ink-12 px-4.5 py-3">
-                <h2 className="text-[17px] font-semibold">Close-out</h2>
-                <p className="text-[13px] text-ink-45">
-                  Completed {date(workOrder.closeout.completed_on)}
-                </p>
-              </div>
+              <SectionHeader
+                icon={IconCode}
+                tone="safe"
+                title="Close-out"
+                hint={`Completed ${date(workOrder.closeout.completed_on)}`}
+              />
               <dl className="grid gap-4 px-4.5 py-4 sm:grid-cols-2">
                 {[
                   ['Failure mode', workOrder.closeout.failure_mode],

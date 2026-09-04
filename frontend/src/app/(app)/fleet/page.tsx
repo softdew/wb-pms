@@ -44,7 +44,7 @@ export default async function FleetPage() {
     : 0;
 
   return (
-    <div className="space-y-5 px-7 py-6">
+    <div className="space-y-6 px-7 py-7">
       <FleetHeadline
         fleet={fleet}
         totals={overview?.totals}

@@ -1,7 +1,7 @@
 /**
  * Drawn for this system rather than pulled from an icon set.
  *
- * Everything is a 1.6px stroke on a 24 grid, built from the vocabulary the
+ * Everything is a 1.9px stroke on a 24 grid, built from the vocabulary the
  * product already uses: sounding contours, a hull, a running-hour gauge, a
  * ghat. A generic pack would make this look like every other admin tool.
  */
@@ -16,7 +16,7 @@ function Svg({ children, className }: IconProps & { children: React.ReactNode })
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.9"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={`${base} ${className ?? 'h-[17px] w-[17px]'}`}
@@ -177,11 +177,11 @@ export const Mark = ({ className }: IconProps) => (
     aria-hidden
   >
     <rect x="0.9" y="0.9" width="30.2" height="30.2" rx="7" stroke="rgba(207,226,228,.42)" strokeWidth="1.4" />
-    <g stroke="#CFE2E4" strokeWidth="1.5" strokeLinecap="round" fill="none">
+    <g stroke="#CFE2E4" strokeWidth="1.7" strokeLinecap="round" fill="none">
       <path d="M6 11.5c2-1.6 3.4-.3 5 -.3s3-1.3 5-1.3 3 1 5 1" opacity=".55" />
       <path d="M6 17c2-1.6 3.4-.3 5-.3s3-1.3 5-1.3 3 1 5 1" opacity=".8" />
     </g>
-    <path d="M16 20.5v4.2" stroke="#C2005A" strokeWidth="2" strokeLinecap="round" />
-    <circle cx="16" cy="25.4" r="1.5" fill="#C2005A" />
+    <path d="M16 20.5v4.2" stroke="#DB0A66" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="16" cy="25.4" r="1.5" fill="#DB0A66" />
   </svg>
 );

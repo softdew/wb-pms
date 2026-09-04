@@ -3,6 +3,8 @@
 import { useActionState, useState, useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
 import { deleteMaster, saveMaster, type MasterResult } from '@/actions/masters';
+import { IconLibrary } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import type { MasterConfig, MasterField, MasterRow } from '@/lib/master-types';
 
 function Submit({ label }: { label: string }) {
@@ -133,11 +135,14 @@ export function MasterTable({
     <div className="space-y-5">
       {editing !== null ? (
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">
-              {editing === 'new' ? `Add a ${config.singular}` : `Edit ${current?.name ?? config.singular}`}
-            </h2>
-          </div>
+          <SectionHeader
+            icon={IconLibrary}
+            title={
+              editing === 'new'
+                ? `Add a ${config.singular}`
+                : `Edit ${current?.name ?? config.singular}`
+            }
+          />
 
           <form action={action} className="space-y-4 px-5 py-4">
             <input type="hidden" name="__fields" value={fieldSpec} />
@@ -184,19 +189,21 @@ export function MasterTable({
       ) : null}
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-        <div className="flex flex-wrap items-center gap-3 border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">{config.title}</h2>
-          <p className="text-[13px] text-ink-45">{rows.length}</p>
-
-          {canManage && editing === null ? (
-            <button
-              onClick={() => setEditing('new')}
-              className="ml-auto rounded-md bg-ink px-3.5 py-1.5 text-[13.5px] font-medium text-white hover:bg-[#0C3040]"
-            >
-              Add a {config.singular}
-            </button>
-          ) : null}
-        </div>
+        <SectionHeader
+          icon={IconLibrary}
+          title={config.title}
+          hint={`${rows.length} ${rows.length === 1 ? 'record' : 'records'}`}
+          action={
+            canManage && editing === null ? (
+              <button
+                onClick={() => setEditing('new')}
+                className="rounded-md bg-ink px-3.5 py-1.5 text-[13.5px] font-medium text-white hover:bg-[#0C3040]"
+              >
+                Add a {config.singular}
+              </button>
+            ) : null
+          }
+        />
 
         {deleteError ? (
           <p role="alert" className="border-b border-ink-12 bg-danger-soft px-5 py-2.5 text-[13px] text-danger">

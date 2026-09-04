@@ -106,7 +106,7 @@ export function TaskForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">The task</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">The task</h2>
           <p className="text-[13px] text-ink-45">
             Written once and applied to every asset of the category. Write it so it reads
             the same on any engine of that type.
@@ -182,7 +182,7 @@ export function TaskForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">When it falls due</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">When it falls due</h2>
         </div>
 
         <div className="px-5 py-4">
@@ -270,7 +270,7 @@ export function TaskForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Doing the work</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Doing the work</h2>
           <p className="text-[13px] text-ink-45">
             Standard hours are what the forward schedule is loaded against, and what an
             actual is compared to at close-out.

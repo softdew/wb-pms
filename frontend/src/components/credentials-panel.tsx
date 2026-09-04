@@ -28,7 +28,7 @@ export function CredentialsPanel({
   return (
     <section className="overflow-hidden rounded-lg border border-safe/30 bg-safe-soft">
       <div className="border-b border-safe/20 px-5 py-3">
-        <h2 className="text-[17px] font-semibold text-safe">Login issued for {operatorName}</h2>
+        <h2 className="font-cond text-[19px] font-semibold text-safe">Login issued for {operatorName}</h2>
         <p className="text-[13px] text-ink-70">
           Hand these over now. The password is not stored in readable form and cannot be
           shown again — a reset issues a new one.

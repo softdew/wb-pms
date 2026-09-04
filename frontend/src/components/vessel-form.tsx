@@ -83,7 +83,7 @@ export function VesselForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">The vessel</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">The vessel</h2>
         </div>
 
         <div className="grid gap-4 px-5 py-4 sm:grid-cols-2">
@@ -144,7 +144,7 @@ export function VesselForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Registration</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Registration</h2>
           <p className="text-[13px] text-ink-45">
             As recorded under the Inland Vessels Act and the applicable State rules.
           </p>

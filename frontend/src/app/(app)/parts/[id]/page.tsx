@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconSchedule, IconStock } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { notFound } from 'next/navigation';
 import { MovementForm } from '@/components/movement-form';
 import { ApiError } from '@/lib/api';
@@ -27,7 +29,7 @@ export default async function PartPage({ params }: { params: Promise<{ id: strin
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="mb-1.5 text-[13px] text-ink-45">
           <Link href="/parts" className="hover:underline">
             Parts catalogue
@@ -71,20 +73,18 @@ export default async function PartPage({ params }: { params: Promise<{ id: strin
         </div>
       </header>
 
-      <div className="grid gap-5 px-7 py-6 xl:grid-cols-[1fr_360px]">
+      <div className="grid gap-6 px-7 py-7 xl:grid-cols-[1fr_360px]">
         <div className="space-y-5">
           <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-            <div className="border-b border-ink-12 px-5 py-3">
-              <h2 className="text-[17px] font-semibold">
-                {operator ? 'Our holding' : 'Held by'}
-              </h2>
-              {!operator ? (
-                <p className="text-[13px] text-ink-45">
-                  Spares are on the contractor&rsquo;s account, so each operator holds its
-                  own.
-                </p>
-              ) : null}
-            </div>
+            <SectionHeader
+              icon={IconStock}
+              title={operator ? 'Our holding' : 'Held by'}
+              hint={
+                operator
+                  ? undefined
+                  : 'Spares are on the contractor’s account, so each operator holds its own.'
+              }
+            />
 
             {holdings.length === 0 ? (
               <p className="px-6 py-8 text-center text-sm text-ink-45">
@@ -143,12 +143,11 @@ export default async function PartPage({ params }: { params: Promise<{ id: strin
           </section>
 
           <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-            <div className="border-b border-ink-12 px-5 py-3">
-              <h2 className="text-[17px] font-semibold">Movements</h2>
-              <p className="text-[13px] text-ink-45">
-                Every change is an entry, so the balance can always be rebuilt from this.
-              </p>
-            </div>
+            <SectionHeader
+              icon={IconSchedule}
+              title="Movements"
+              hint="Every change is an entry, so the balance can always be rebuilt from this."
+            />
 
             {movements.length === 0 ? (
               <p className="px-6 py-8 text-center text-sm text-ink-45">

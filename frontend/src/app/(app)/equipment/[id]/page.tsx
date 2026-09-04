@@ -1,5 +1,7 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
+import { IconSchedule, IconWorkOrder } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { notFound } from 'next/navigation';
 import { IntervalBar } from '@/components/interval-bar';
 import { MeterReadingForm } from '@/components/meter-reading-form';
@@ -100,7 +102,7 @@ export default async function EquipmentDetailPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="mb-1.5 text-[13px] text-ink-45">
           <Link href="/equipment" className="hover:underline">
             Equipment
@@ -175,7 +177,7 @@ export default async function EquipmentDetailPage({
         </div>
       </header>
 
-      <div className="space-y-5 px-7 py-6">
+      <div className="space-y-6 px-7 py-7">
         {equipment.hidden_failure_flag ? (
           <p className="rounded-md border border-caution/30 bg-caution-soft px-4 py-3 text-[13.5px] text-caution">
             Failure would not be evident in normal operation. This item can never be run
@@ -216,13 +218,16 @@ export default async function EquipmentDetailPage({
               </section>
             ) : (
               <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-                <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-                  <h2 className="text-[17px] font-semibold">Schedule</h2>
-                  <p className="text-[13px] text-ink-45">{totals.plans} tasks</p>
-                  <div className="ml-auto w-40">
-                    <ProportionBar due={totals.due} soon={totals.soon} ok={totals.ok} />
-                  </div>
-                </div>
+                <SectionHeader
+                  icon={IconSchedule}
+                  title="Schedule"
+                  hint={`${totals.plans} tasks`}
+                  action={
+                    <div className="w-40">
+                      <ProportionBar due={totals.due} soon={totals.soon} ok={totals.ok} />
+                    </div>
+                  }
+                />
 
                 <table className="w-full">
                   <thead>
@@ -317,9 +322,7 @@ export default async function EquipmentDetailPage({
 
             {work_orders.length > 0 ? (
               <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-                <div className="border-b border-ink-12 px-5 py-3">
-                  <h2 className="text-[17px] font-semibold">Recent work</h2>
-                </div>
+                <SectionHeader icon={IconWorkOrder} title="Recent work" />
                 <ul className="divide-y divide-ink-06">
                   {work_orders.map((order) => (
                     <li key={order.id} className="flex flex-wrap items-baseline gap-3 px-5 py-2.5">

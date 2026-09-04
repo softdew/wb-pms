@@ -26,7 +26,7 @@ export default async function AssignVesselPage({ params }: { params: Promise<{ i
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="mb-1.5 text-[13px] text-ink-45">
           <Link href="/vessels" className="hover:underline">
             Vessels
@@ -53,7 +53,9 @@ export default async function AssignVesselPage({ params }: { params: Promise<{ i
         {history.length > 0 ? (
           <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
             <div className="border-b border-ink-12 px-5 py-3">
-              <h2 className="text-[17px] font-semibold">Who has held this vessel</h2>
+              <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">
+                Who has held this vessel
+              </h2>
             </div>
             <table className="w-full">
               <thead>

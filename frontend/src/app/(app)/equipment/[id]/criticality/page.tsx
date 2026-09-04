@@ -40,7 +40,7 @@ export default async function ScoreCriticalityPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="mb-1.5 text-[13px] text-ink-45">
           <Link href="/criticality" className="hover:underline">
             Criticality
@@ -69,7 +69,7 @@ export default async function ScoreCriticalityPage({
         </div>
       </header>
 
-      <div className="space-y-5 px-7 py-6">
+      <div className="space-y-6 px-7 py-7">
         {equipment.hidden_failure_flag ? (
           <p className="rounded-md border border-caution/30 bg-caution-soft px-4 py-3 text-[13.5px] text-caution">
             This item carries a hidden failure mode — its failure would not be evident in
@@ -88,7 +88,9 @@ export default async function ScoreCriticalityPage({
         {previous.length > 0 ? (
           <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
             <div className="border-b border-ink-12 px-5 py-3">
-              <h2 className="text-[17px] font-semibold">Previous assessments</h2>
+              <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">
+                Previous assessments
+              </h2>
               <p className="text-[13px] text-ink-45">
                 Each holds the thresholds it was judged under, so recalibrating the scales
                 does not rewrite past decisions.

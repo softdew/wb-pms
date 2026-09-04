@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconEquipment } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { BandBadge } from '@/components/status';
 import { hasRole, requireUser } from '@/lib/auth';
 import { hours } from '@/lib/format';
@@ -22,7 +24,7 @@ export default async function EquipmentPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Fleet</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">Equipment</h1>
@@ -44,12 +46,15 @@ export default async function EquipmentPage({
         </div>
       </header>
 
-      <div className="px-7 py-6">
+      <div className="px-7 py-7">
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex flex-wrap items-center gap-2 border-b border-ink-12 px-4.5 py-3">
-            <h2 className="mr-2 text-[17px] font-semibold">Register</h2>
-
-            <Link
+          <SectionHeader
+            icon={IconEquipment}
+            title="Register"
+            hint={`${equipment.total} items fitted across the fleet`}
+            action={
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
               href="/equipment"
               className={`rounded-full border px-3 py-[3px] text-[13px] transition-colors ${
                 !awaiting_criticality
@@ -78,8 +83,10 @@ export default async function EquipmentPage({
                 aria-label="Search equipment"
                 className="w-60 rounded-md border border-ink-22 bg-white px-3 py-1.5 text-sm outline-none focus:border-ink-45"
               />
-            </form>
-          </div>
+                </form>
+              </div>
+            }
+          />
 
           {equipment.data.length === 0 ? (
             <div className="px-6 py-12 text-center">

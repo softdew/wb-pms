@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconOverdue, IconScale } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { ApprovalRow } from '@/components/approval-row';
 import { BandDistribution } from '@/components/band-distribution';
 import { hasRole, requireUser } from '@/lib/auth';
@@ -17,7 +19,7 @@ export default async function CriticalityPage() {
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Fleet</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">Criticality</h1>
@@ -28,21 +30,23 @@ export default async function CriticalityPage() {
         </div>
       </header>
 
-      <div className="space-y-5 px-7 py-6">
+      <div className="space-y-6 px-7 py-7">
         {distribution ? <BandDistribution distribution={distribution} /> : null}
 
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">Awaiting approval</h2>
-            <p className="text-[13px] text-ink-45">
-              {pending?.total ?? 0} {pending?.total === 1 ? 'assessment' : 'assessments'}
-            </p>
-            {!canApprove ? (
-              <p className="ml-auto text-[13px] text-ink-45">
-                Approval sits with the technical authority.
-              </p>
-            ) : null}
-          </div>
+          <SectionHeader
+            icon={IconOverdue}
+            tone={pending?.total ? 'caution' : 'shoal'}
+            title="Awaiting approval"
+            hint={`${pending?.total ?? 0} ${pending?.total === 1 ? 'assessment' : 'assessments'}`}
+            action={
+              !canApprove ? (
+                <p className="text-[13px] text-ink-45">
+                  Approval sits with the technical authority.
+                </p>
+              ) : null
+            }
+          />
 
           {!pending || pending.data.length === 0 ? (
             <div className="px-6 py-10 text-center">
@@ -59,13 +63,12 @@ export default async function CriticalityPage() {
         </section>
 
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">Not yet assessed</h2>
-            <p className="text-[13px] text-ink-45">
-              {unassessed?.total ?? 0} items. Nothing can be planned against them until they
-              carry a band.
-            </p>
-          </div>
+          <SectionHeader
+            icon={IconScale}
+            tone={unassessed?.total ? 'caution' : 'shoal'}
+            title="Not yet assessed"
+            hint={`${unassessed?.total ?? 0} items. Nothing can be planned against them until they carry a band.`}
+          />
 
           {!unassessed || unassessed.data.length === 0 ? (
             <div className="px-6 py-10 text-center">

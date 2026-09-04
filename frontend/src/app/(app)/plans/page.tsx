@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconVessel } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { IntervalBar } from '@/components/interval-bar';
 import { PlanRowActions } from '@/components/plan-row-actions';
 import { DueBadge } from '@/components/status';
@@ -64,7 +66,7 @@ export default async function PlansPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Fleet</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">
@@ -81,7 +83,7 @@ export default async function PlansPage({
         </div>
       </header>
 
-      <div className="space-y-5 px-7 py-6">
+      <div className="space-y-6 px-7 py-7">
         <section className="flex flex-wrap items-center gap-2 rounded-lg border border-ink-12 bg-white px-4.5 py-3">
           {statusFilters.map((filter) => {
             const active = (due_status ?? '') === filter.key;
@@ -161,9 +163,7 @@ export default async function PlansPage({
               key={group.vessel}
               className="overflow-hidden rounded-lg border border-ink-12 bg-white"
             >
-              <div className="border-b border-ink-12 px-5 py-3">
-                <h2 className="text-[17px] font-semibold">{group.vessel}</h2>
-              </div>
+              <SectionHeader icon={IconVessel} title={group.vessel} />
 
               {Object.entries(group.equipment).map(([equipmentName, list]) => (
                 <div key={equipmentName}>

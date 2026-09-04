@@ -45,7 +45,7 @@ export function PartForm({
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">The part</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">The part</h2>
           <p className="text-[13px] text-ink-45">
             What the thing is. How many anyone holds is recorded separately, per
             operator, because spares are on the contractor&rsquo;s account.

@@ -108,7 +108,7 @@ export function OperatorForm({ operator }: { operator?: Operator }) {
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">The company</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">The company</h2>
         </div>
 
         <div className="grid gap-4 px-5 py-4 sm:grid-cols-2">
@@ -178,7 +178,7 @@ export function OperatorForm({ operator }: { operator?: Operator }) {
       {!isDepartment ? (
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
           <div className="border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">Agreement</h2>
+            <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Agreement</h2>
             <p className="text-[13px] text-ink-45">
               Vessels are held under tender for three to five years. Recording the
               reference now means a handover later can cite it.
@@ -196,7 +196,7 @@ export function OperatorForm({ operator }: { operator?: Operator }) {
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
         <div className="border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Contact</h2>
+          <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Contact</h2>
         </div>
 
         <div className="grid gap-4 px-5 py-4 sm:grid-cols-2">
@@ -234,7 +234,7 @@ export function OperatorForm({ operator }: { operator?: Operator }) {
       {!editing && !isDepartment ? (
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
           <div className="border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">Login</h2>
+            <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Login</h2>
             <p className="text-[13px] text-ink-45">
               One account for the company, not per engineer. A sign-off then identifies
               the contractor. Leave the password blank and one is generated.

@@ -1,6 +1,6 @@
 import { get } from '@/lib/api';
 import type { PlanWithProgress } from '@/lib/fleet';
-import type { CriticalityBand, Paginated, Vessel } from '@/types/api';
+import type { CriticalityBand, Paginated, Vessel, WorkOrder } from '@/types/api';
 
 export interface EquipmentSummary {
   id: number;
@@ -98,4 +98,25 @@ export function groupSchedule(
         })),
       };
     });
+}
+
+/** Work raised against anything fitted to this vessel. */
+export function loadVesselWorkOrders(vesselId: number) {
+  return get<Paginated<WorkOrder>>('/work-orders', { vessel_id: vesselId, per_page: 100 });
+}
+
+export interface Tenure {
+  id: number;
+  assigned_from: string;
+  assigned_until: string | null;
+  agreement_no: string | null;
+  tender_reference: string | null;
+  remarks: string | null;
+  operator?: { id: number; code: string; name: string; type: string } | null;
+  incharge?: { id: number; name: string; licence_no: string | null } | null;
+}
+
+/** Who has held this vessel, most recent first. */
+export function loadTenure(vesselId: number) {
+  return get<Tenure[]>(`/vessels/${vesselId}/history`);
 }

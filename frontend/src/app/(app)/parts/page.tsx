@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconPart } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { hasRole, isOperator, requireUser } from '@/lib/auth';
 import { listParts } from '@/lib/parts';
 
@@ -16,7 +18,7 @@ export default async function PartsPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Stores</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">Parts catalogue</h1>
@@ -40,11 +42,14 @@ export default async function PartsPage({
         ) : null}
       </header>
 
-      <div className="px-7 py-6">
+      <div className="px-7 py-7">
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex flex-wrap items-center gap-3 border-b border-ink-12 px-4.5 py-3">
-            <h2 className="text-[17px] font-semibold">Catalogue</h2>
-            <form className="ml-auto">
+          <SectionHeader
+            icon={IconPart}
+            title="Catalogue"
+            hint="One catalogue for the fleet. Each operator holds its own stock against it."
+            action={
+              <form>
               <input
                 name="search"
                 defaultValue={search}
@@ -52,8 +57,9 @@ export default async function PartsPage({
                 aria-label="Search the catalogue"
                 className="w-64 rounded-md border border-ink-22 bg-white px-3 py-1.5 text-sm outline-none focus:border-ink-45"
               />
-            </form>
-          </div>
+              </form>
+            }
+          />
 
           {parts.data.length === 0 ? (
             <div className="px-6 py-12 text-center">

@@ -29,7 +29,7 @@ export default async function MasterPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5">
         <p className="text-[13px] text-ink-45">Setup</p>
         <h1 className="text-[29px] leading-tight font-semibold">{config.title}</h1>
         <p className="mt-1 max-w-3xl text-[13.5px] text-ink-45">{config.purpose}</p>
@@ -51,7 +51,7 @@ export default async function MasterPage({
         </nav>
       </header>
 
-      <div className="px-7 py-6">
+      <div className="px-7 py-7">
         <MasterTable
           config={config}
           rows={rows.data}

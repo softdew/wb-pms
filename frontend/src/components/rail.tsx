@@ -205,7 +205,7 @@ export function Rail({ user, counts = {} }: { user: CurrentUser; counts?: RailCo
           <p className="font-cond text-[22px] leading-none font-bold tracking-wide text-white">
             WB PMS
           </p>
-          <p className="mt-1 truncate text-[11.5px] leading-snug text-white/45">
+          <p className="mt-1 truncate text-[11.5px] leading-snug text-shoal/80">
             {user.organisation?.name ?? 'No organisation'}
           </p>
         </div>
@@ -215,7 +215,7 @@ export function Rail({ user, counts = {} }: { user: CurrentUser; counts?: RailCo
         {groups.map((group, index) => (
           <div key={group.heading}>
             <p
-              className={`font-cond px-3 pb-1 text-[11.5px] font-semibold tracking-[0.16em] text-white/30 uppercase ${
+              className={`font-cond px-3 pb-1 text-[11.5px] font-semibold tracking-[0.16em] text-shoal/70 uppercase ${
                 index === 0 ? 'pt-1' : 'mt-3 border-t border-white/[0.07] pt-3.5'
               }`}
             >
@@ -246,7 +246,7 @@ export function Rail({ user, counts = {} }: { user: CurrentUser; counts?: RailCo
                   />
                   <Icon
                     className={`h-[17px] w-[17px] shrink-0 transition-colors ${
-                      active ? 'text-shoal' : 'text-white/40 group-hover:text-white/70'
+                      active ? 'text-shoal' : 'text-shoal/70 group-hover:text-shoal'
                     }`}
                   />
                   <span className="truncate">{item.label}</span>
@@ -277,7 +277,7 @@ export function Rail({ user, counts = {} }: { user: CurrentUser; counts?: RailCo
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[13.5px] leading-tight text-white">{user.name}</p>
-          <p className="truncate text-[12px] text-white/45 capitalize">{roleLabel}</p>
+          <p className="truncate text-[12px] text-shoal/80 capitalize">{roleLabel}</p>
         </div>
         <form action={signOut}>
           <button

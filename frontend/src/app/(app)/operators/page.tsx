@@ -12,7 +12,7 @@ export default async function OperatorsPage() {
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Operators</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">Operating companies</h1>
@@ -30,7 +30,7 @@ export default async function OperatorsPage() {
         </div>
       </header>
 
-      <div className="px-7 py-6">
+      <div className="px-7 py-7">
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
           {operators.data.length === 0 ? (
             <div className="px-6 py-12 text-center">

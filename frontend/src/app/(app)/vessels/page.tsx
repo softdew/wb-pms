@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconVessel } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { VesselStatusBadge } from '@/components/status';
 import { get } from '@/lib/api';
 import { hasRole, isOperator, requireUser } from '@/lib/auth';
@@ -23,7 +25,7 @@ export default async function VesselsPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Fleet</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">
@@ -47,11 +49,14 @@ export default async function VesselsPage({
         </div>
       </header>
 
-      <div className="px-7 py-6">
+      <div className="px-7 py-7">
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex items-center gap-3 border-b border-ink-12 px-4.5 py-3">
-            <h2 className="text-[17px] font-semibold">Register</h2>
-            <form className="ml-auto">
+          <SectionHeader
+            icon={IconVessel}
+            title="Register"
+            hint="The department owns every vessel; who operates each one is recorded separately."
+            action={
+              <form>
               <input
                 name="search"
                 defaultValue={search}
@@ -59,8 +64,9 @@ export default async function VesselsPage({
                 aria-label="Search vessels"
                 className="w-56 rounded-md border border-ink-22 bg-white px-3 py-1.5 text-sm outline-none focus:border-ink-45"
               />
-            </form>
-          </div>
+              </form>
+            }
+          />
 
           {vessels.data.length === 0 ? (
             <div className="px-6 py-12 text-center">

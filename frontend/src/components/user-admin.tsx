@@ -10,6 +10,8 @@ import {
   type UserResult,
 } from '@/actions/users';
 import { CredentialsPanel } from '@/components/credentials-panel';
+import { IconOperator, IconUsers as IconPeople } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { roleDescription, type ManagedUser, type RoleOption } from '@/lib/user-types';
 
 function Submit({ label }: { label: string }) {
@@ -230,11 +232,10 @@ export function UserAdmin({
     <div className="space-y-5">
       {editing !== null ? (
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">
-              {editing === 'new' ? 'Add an account' : `Edit ${editing.name}`}
-            </h2>
-          </div>
+          <SectionHeader
+            icon={IconPeople}
+            title={editing === 'new' ? 'Add an account' : `Edit ${editing.name}`}
+          />
           <div className="px-5 py-4">
             <UserForm
               user={editing === 'new' ? undefined : editing}
@@ -253,19 +254,21 @@ export function UserAdmin({
       ) : null}
 
       <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-        <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-          <h2 className="text-[17px] font-semibold">Department accounts</h2>
-          <p className="text-[13px] text-ink-45">{department.length}</p>
-
-          {editing === null ? (
-            <button
-              onClick={() => setEditing('new')}
-              className="ml-auto rounded-md bg-ink px-3.5 py-1.5 text-[13.5px] font-medium text-white hover:bg-[#0C3040]"
-            >
-              Add an account
-            </button>
-          ) : null}
-        </div>
+        <SectionHeader
+          icon={IconPeople}
+          title="Department accounts"
+          hint={`${department.length} ${department.length === 1 ? 'account' : 'accounts'}`}
+          action={
+            editing === null ? (
+              <button
+                onClick={() => setEditing('new')}
+                className="rounded-md bg-ink px-3.5 py-1.5 text-[13.5px] font-medium text-white hover:bg-[#0C3040]"
+              >
+                Add an account
+              </button>
+            ) : null
+          }
+        />
 
         <table className="w-full">
           <thead>
@@ -353,13 +356,11 @@ export function UserAdmin({
 
       {operators.length > 0 ? (
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-            <h2 className="text-[17px] font-semibold">Operator logins</h2>
-            <p className="text-[13px] text-ink-45">
-              One account per operating company. Issued and withdrawn from the operator
-              record, not here.
-            </p>
-          </div>
+          <SectionHeader
+            icon={IconOperator}
+            title="Operator logins"
+            hint="One account per operating company. Issued and withdrawn from the operator record, not here."
+          />
 
           <ul className="divide-y divide-ink-06">
             {operators.map((user) => (

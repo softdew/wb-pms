@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { IconLibrary } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import { hasRole, requireUser } from '@/lib/auth';
 import { listTasks, triggerClassLabel } from '@/lib/tasks';
 import type { ChecklistTask } from '@/lib/task-types';
@@ -31,7 +33,7 @@ export default async function TaskLibraryPage({
 
   return (
     <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
+      <header className="border-b border-ink-12 bg-white shadow-[0_1px_3px_rgba(6,32,44,.05)] px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">Fleet</p>
         <div className="flex flex-wrap items-end gap-6">
           <h1 className="text-[29px] leading-tight font-semibold">Task library</h1>
@@ -53,7 +55,7 @@ export default async function TaskLibraryPage({
         </div>
       </header>
 
-      <div className="space-y-5 px-7 py-6">
+      <div className="space-y-6 px-7 py-7">
         <form className="flex flex-wrap items-center gap-2">
           <input
             name="search"
@@ -86,10 +88,11 @@ export default async function TaskLibraryPage({
         ) : (
           Object.entries(grouped).map(([category, list]) => (
             <section key={category} className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-              <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-                <h2 className="text-[17px] font-semibold">{category}</h2>
-                <p className="text-[13px] text-ink-45">{list.length}</p>
-              </div>
+              <SectionHeader
+                icon={IconLibrary}
+                title={category}
+                hint={`${list.length} ${list.length === 1 ? 'task' : 'tasks'}`}
+              />
 
               <table className="w-full">
                 <thead>

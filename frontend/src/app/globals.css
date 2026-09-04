@@ -17,16 +17,20 @@
   --color-ink-lift: #0C3040;
   --color-ink-deep: #041721;
 
-  --color-ink-70: rgba(6, 32, 44, 0.70);
-  --color-ink-45: rgba(6, 32, 44, 0.48);
+  --color-ink-70: rgba(6, 32, 44, 0.80);
+  /* Secondary text, not a border. At 0.48 this was roughly 3.3:1 on white,
+     which fails for the 12.5px it is mostly used at. */
+  --color-ink-45: rgba(6, 32, 44, 0.64);
   --color-ink-22: rgba(6, 32, 44, 0.22);
   --color-ink-12: rgba(6, 32, 44, 0.12);
   --color-ink-06: rgba(6, 32, 44, 0.06);
 
-  --color-paper: #EDF2F1;
+  /* The ground. Deep enough that a white panel sits on it: at #EDF2F1 the two
+     were about four per cent apart and every panel dissolved into the page. */
+  --color-paper: #DEE9E8;
   --color-shoal: #9FD8DE;      /* bright enough to read as an accent on ink */
   --color-shoal-deep: #4FA8B4;
-  --color-shoal-soft: #E2EFEF;
+  --color-shoal-soft: #DCECEC;
   --color-land: #E8D9B4;
 
   /* Chart hazard magenta, chart caution, safe water. */
@@ -102,4 +106,27 @@ h1, h2, h3, th, .cond {
 
 .nav-progress-bar {
   animation: nav-progress 1.1s ease-in-out infinite;
+}
+
+/*
+ * Panels lift off the page.
+ *
+ * Written outside @layer so nothing in the cascade can drop it: Tailwind v4
+ * puts utilities above components, and an unregistered layer is easy to lose.
+ * Two shadows rather than one — a tight contact shadow for the edge, a wider
+ * soft one for the lift.
+ */
+.rounded-lg.border.bg-white,
+.rounded-lg.border.bg-danger-soft,
+.rounded-lg.border.bg-caution-soft,
+.rounded-lg.border.bg-safe-soft,
+.rounded-lg.border.bg-shoal-soft {
+  box-shadow:
+    0 1px 2px rgba(6, 32, 44, 0.07),
+    0 8px 24px -6px rgba(6, 32, 44, 0.12);
+}
+
+/* Rows lift on hover, so a long table feels responsive rather than static. */
+tbody tr {
+  transition: background-color 120ms ease;
 }

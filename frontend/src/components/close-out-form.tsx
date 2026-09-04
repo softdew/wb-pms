@@ -76,7 +76,7 @@ export function CloseOutForm({
   return (
     <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
       <div className="border-b border-ink-12 px-4.5 py-3">
-        <h2 className="text-[17px] font-semibold">Close out</h2>
+        <h2 className="font-cond text-[19px] font-semibold text-shoal-ink">Close out</h2>
         <p className="text-[13px] text-ink-45">
           All four codes are required. Notes are recorded in addition to them, not instead.
         </p>
