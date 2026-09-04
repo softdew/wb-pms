@@ -1,58 +1,90 @@
 import Link from 'next/link';
+import { AttentionList } from '@/components/attention-list';
 import { BacklogPipeline, type BacklogData } from '@/components/backlog-pipeline';
+import { OperatorComparison } from '@/components/operator-comparison';
 import { ProportionBar } from '@/components/proportion-bar';
+import { ReadinessList } from '@/components/readiness-list';
 import { Sounding } from '@/components/sounding';
 import { get } from '@/lib/api';
-import { isOperator, requireUser } from '@/lib/auth';
+import { hasRole, isOperator, requireUser } from '@/lib/auth';
 import { loadFleet } from '@/lib/fleet';
-import { backlogLabel, hours } from '@/lib/format';
+import { hours } from '@/lib/format';
+import { loadOverview } from '@/lib/overview';
 import type { BacklogState } from '@/types/api';
 
 type Backlog = Record<BacklogState, { label: string; count: number; overdue: number }>;
 
+/**
+ * Two audiences, one route.
+ *
+ * The superadmin's question is whether the system is set up and whether the
+ * fleet is healthy across operators. A planner's is which tasks are due this
+ * week. Same page, different opening section, rather than two dashboards that
+ * both get maintained badly.
+ */
 export default async function FleetPage() {
   const user = await requireUser();
-  const [fleet, backlog] = await Promise.all([
+  const isSuperadmin = hasRole(user, 'department-admin');
+  const operator = isOperator(user);
+
+  const [fleet, backlog, overview] = await Promise.all([
     loadFleet(),
     get<Backlog>('/work-orders/backlog').catch(() => null),
+    isSuperadmin ? loadOverview().catch(() => null) : Promise.resolve(null),
   ]);
 
-  const operator = isOperator(user);
+  const title = isSuperadmin ? 'Overview' : operator ? 'Our fleet' : 'Fleet status';
 
   return (
     <>
       <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
         <p className="text-[13px] text-ink-45">{user.organisation?.name}</p>
         <div className="flex flex-wrap items-end gap-6">
-          <h1 className="text-[29px] leading-tight font-semibold">
-            {operator ? 'Our fleet' : 'Fleet status'}
-          </h1>
-          <p className="pb-1.5 text-[13px] text-ink-45">
-            {fleet.vessels.length} vessels · {fleet.counts.total} planned tasks
-            {fleet.unassigned > 0 && !operator ? (
-              <span className="text-caution"> · {fleet.unassigned} not assigned to an operator</span>
-            ) : null}
-          </p>
+          <h1 className="text-[29px] leading-tight font-semibold">{title}</h1>
+
+          {overview ? (
+            <p className="pb-1.5 text-[13px] text-ink-45">
+              {overview.totals.operators} operators · {overview.totals.vessels} vessels ·{' '}
+              {overview.totals.equipment} items · {overview.totals.plans} planned tasks
+            </p>
+          ) : (
+            <p className="pb-1.5 text-[13px] text-ink-45">
+              {fleet.vessels.length} vessels · {fleet.counts.total} planned tasks
+              {fleet.unassigned > 0 && !operator ? (
+                <span className="text-caution"> · {fleet.unassigned} not assigned</span>
+              ) : null}
+            </p>
+          )}
         </div>
       </header>
 
       <div className="space-y-5 px-7 py-6">
+        {/* The superadmin sees what is incomplete before what is due. */}
+        {overview ? (
+          <div className="grid gap-5 xl:grid-cols-2">
+            <ReadinessList items={overview.readiness} />
+            <AttentionList items={overview.attention} />
+          </div>
+        ) : null}
+
         {fleet.counts.total > 0 ? (
           <Sounding
             ticks={fleet.ticks}
             title="Fleet sounding"
             hint="Every planned task, placed by how far through its interval it has run"
           />
-        ) : (
+        ) : !overview ? (
           <section className="rounded-lg border border-ink-12 bg-white px-6 py-10 text-center">
             <p className="font-cond text-lg font-semibold">No maintenance plans yet.</p>
             <p className="mt-1 text-sm text-ink-45">
               Register equipment against a vessel, then apply the task library to it.
             </p>
           </section>
-        )}
+        ) : null}
 
         {backlog ? <BacklogPipeline backlog={backlog as BacklogData} /> : null}
+
+        {overview ? <OperatorComparison operators={overview.operators} /> : null}
 
         <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
           <div className="flex items-center gap-3 border-b border-ink-12 px-4.5 py-3">
@@ -65,7 +97,7 @@ export default async function FleetPage() {
 
           {fleet.vessels.length === 0 ? (
             <p className="px-6 py-10 text-center text-sm text-ink-45">
-              No vessels are assigned to you yet.
+              No vessels {operator ? 'are assigned to you' : 'in the register'} yet.
             </p>
           ) : (
             <table className="w-full">
@@ -133,8 +165,7 @@ export default async function FleetPage() {
                           <p className="text-[12.5px] text-ink-45">
                             {worst.equipment?.name} ·{' '}
                             <span className="text-danger">
-                              {hours(worst.remaining)}{' '}
-                              {worst.is_meter_based ? 'hrs' : 'days'} past
+                              {hours(worst.remaining)} {worst.is_meter_based ? 'hrs' : 'days'} past
                             </span>
                           </p>
                         </>

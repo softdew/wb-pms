@@ -191,4 +191,5 @@ class Equipment extends Model implements AuditableContract
 			->get()
 			->sortBy(fn (MaintenancePlan $plan) => $plan->task?->sort_order ?? 0);
 	}
+	
 }

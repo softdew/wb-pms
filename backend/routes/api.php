@@ -17,6 +17,11 @@ use App\Http\Controllers\Api\OperatorController;
 use App\Http\Controllers\Api\VesselAssignmentController;
 use App\Http\Controllers\Api\EquipmentCategoryController;
 use App\Http\Controllers\Api\EquipmentModelController;
+use App\Http\Controllers\Api\EquipmentDetailController;
+use App\Http\Controllers\Api\TradeController;
+use App\Http\Controllers\Api\PartCategoryController;
+use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\OverviewController;
 
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
@@ -37,6 +42,15 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
         Route::get('equipment-categories/{equipment_category}', [EquipmentCategoryController::class, 'show']);
         Route::get('equipment-models', [EquipmentModelController::class, 'index']);
         Route::get('equipment-models/{equipment_model}', [EquipmentModelController::class, 'show']);
+		Route::get('equipment/{equipment}/library-preview', [ChecklistTaskController::class, 'previewForEquipment']);
+		
+		Route::get('trades', [TradeController::class, 'index']);
+        Route::get('trades/{trade}', [TradeController::class, 'show']);
+		
+		Route::get('part-categories', [PartCategoryController::class, 'index']);
+        Route::get('part-categories/{part_category}', [PartCategoryController::class, 'show']);
+        Route::get('vendors', [VendorController::class, 'index']);
+        Route::get('vendors/{vendor}', [VendorController::class, 'show']);
     });
 
     Route::middleware('permission:'.P::VIEW_FLEET)->group(function () {
@@ -58,6 +72,9 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
         Route::get('criticality/distribution', [CriticalityController::class, 'distribution']);
 		Route::get('operators', [OperatorController::class, 'index']);
         Route::get('operators/{operator}', [OperatorController::class, 'show']);
+		Route::get('equipment/{equipment}/detail', [EquipmentDetailController::class, 'show']);
+		
+		Route::get('overview', [OverviewController::class, 'show']);
     });
 
 	Route::middleware('permission:'.P::MANAGE_OPERATORS)->group(function () {
@@ -93,10 +110,16 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
         Route::apiResource('locations', LocationController::class)->except(['index', 'show']);
 		Route::apiResource('equipment-categories', EquipmentCategoryController::class)->except(['index', 'show']);
         Route::apiResource('equipment-models', EquipmentModelController::class)->except(['index', 'show']);
+		Route::apiResource('trades', TradeController::class)->except(['index', 'show']);
+		
+		Route::apiResource('part-categories', PartCategoryController::class)->except(['index', 'show']);
+        Route::apiResource('vendors', VendorController::class)->except(['index', 'show']);
     });
 
     Route::middleware('permission:'.P::MANAGE_TASK_LIBRARY)->group(function () {
         Route::apiResource('checklist-tasks', ChecklistTaskController::class)->except(['index', 'show']);
+		Route::post('checklist-tasks/{checklist_task}/readings', [ChecklistTaskController::class, 'saveReadings']);
+        Route::post('checklist-tasks/{checklist_task}/parts', [ChecklistTaskController::class, 'saveParts']);
     });
 
     Route::middleware('permission:'.P::MANAGE_FLEET)->group(function () {

@@ -101,12 +101,12 @@ function groupsFor(user: CurrentUser, counts: RailCounts): Group[] {
     });
   }
 
-  if (hasRole(user, 'department-admin', 'technical-authority')) {
+  if (hasRole(user, 'department-admin', 'technical-authority', 'planner')) {
     groups.push({
       heading: 'Setup',
       items: [
-        { href: '/setup/criticality', label: 'Criticality scales', icon: IconScale },
-        { href: '/setup/codes', label: 'Failure codes', icon: IconCode },
+        { href: '/setup/ship-types', label: 'Master data', icon: IconLibrary },
+        { href: '/criticality', label: 'Criticality', icon: IconScale },
         ...(hasRole(user, 'department-admin')
           ? [{ href: '/setup/users', label: 'Users & roles', icon: IconPeople }]
           : []),
