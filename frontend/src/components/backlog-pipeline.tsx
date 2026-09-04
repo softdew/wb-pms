@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { IconPart, IconSpanner, IconVessel } from '@/components/icons';
+import { IconPart, IconSpanner, IconVessel, IconWorkOrder } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import type { BacklogState } from '@/types/api';
 
 export interface BacklogEntry {
@@ -76,14 +77,15 @@ export function BacklogPipeline({ backlog, active }: { backlog: BacklogData; act
 
   return (
     <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-      <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-        <h2 className="text-[17px] font-semibold">Backlog</h2>
-        <p className="text-[13px] text-ink-45">
-          {total === 0
+      <SectionHeader
+        icon={IconWorkOrder}
+        title="Backlog"
+        hint={
+          total === 0
             ? 'Nothing open.'
-            : `${total} open ${total === 1 ? 'job' : 'jobs'}, by what is holding them up`}
-        </p>
-      </div>
+            : `${total} open ${total === 1 ? 'job' : 'jobs'}, by what is holding them up`
+        }
+      />
 
       <div className="grid sm:grid-cols-3">
         {order.map((state, index) => {

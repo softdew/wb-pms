@@ -1,10 +1,12 @@
 import Link from 'next/link';
-import { AttentionList } from '@/components/attention-list';
 import { BacklogPipeline, type BacklogData } from '@/components/backlog-pipeline';
+import { IconVessel } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
+import { FleetHeadline } from '@/components/fleet-headline';
 import { OperatorComparison } from '@/components/operator-comparison';
 import { ProportionBar } from '@/components/proportion-bar';
-import { ReadinessList } from '@/components/readiness-list';
 import { Sounding } from '@/components/sounding';
+import { TodoList } from '@/components/todo-list';
 import { get } from '@/lib/api';
 import { hasRole, isOperator, requireUser } from '@/lib/auth';
 import { loadFleet } from '@/lib/fleet';
@@ -18,9 +20,12 @@ type Backlog = Record<BacklogState, { label: string; count: number; overdue: num
  * Two audiences, one route.
  *
  * The superadmin's question is whether the system is set up and whether the
- * fleet is healthy across operators. A planner's is which tasks are due this
- * week. Same page, different opening section, rather than two dashboards that
- * both get maintained badly.
+ * fleet is healthy across operators; a planner's is which tasks are due this
+ * week. Same page, one extra section, rather than two dashboards that both get
+ * maintained badly.
+ *
+ * Order matters more than content here: the finding first, then the shape of
+ * the backlog, then the work to do about it.
  */
 export default async function FleetPage() {
   const user = await requireUser();
@@ -33,153 +38,135 @@ export default async function FleetPage() {
     isSuperadmin ? loadOverview().catch(() => null) : Promise.resolve(null),
   ]);
 
-  const title = isSuperadmin ? 'Overview' : operator ? 'Our fleet' : 'Fleet status';
+  const outstanding = overview
+    ? overview.readiness.filter((item) => item.count > 0).length +
+      overview.attention.filter((item) => item.count > 0).length
+    : 0;
 
   return (
-    <>
-      <header className="border-b border-ink-12 bg-white px-7 pt-5 pb-4">
-        <p className="text-[13px] text-ink-45">{user.organisation?.name}</p>
-        <div className="flex flex-wrap items-end gap-6">
-          <h1 className="text-[29px] leading-tight font-semibold">{title}</h1>
+    <div className="space-y-5 px-7 py-6">
+      <FleetHeadline
+        fleet={fleet}
+        totals={overview?.totals}
+        organisation={user.organisation?.name}
+        outstanding={outstanding}
+      />
 
-          {overview ? (
-            <p className="pb-1.5 text-[13px] text-ink-45">
-              {overview.totals.operators} operators · {overview.totals.vessels} vessels ·{' '}
-              {overview.totals.equipment} items · {overview.totals.plans} planned tasks
-            </p>
-          ) : (
-            <p className="pb-1.5 text-[13px] text-ink-45">
-              {fleet.vessels.length} vessels · {fleet.counts.total} planned tasks
-              {fleet.unassigned > 0 && !operator ? (
-                <span className="text-caution"> · {fleet.unassigned} not assigned</span>
-              ) : null}
-            </p>
-          )}
-        </div>
-      </header>
+      {fleet.counts.total > 0 ? (
+        <Sounding
+          ticks={fleet.ticks}
+          title="Fleet sounding"
+          hint="Every planned task, placed by how far through its interval it has run"
+        />
+      ) : null}
 
-      <div className="space-y-5 px-7 py-6">
-        {/* The superadmin sees what is incomplete before what is due. */}
-        {overview ? (
-          <div className="grid gap-5 xl:grid-cols-2">
-            <ReadinessList items={overview.readiness} />
-            <AttentionList items={overview.attention} />
-          </div>
-        ) : null}
+      {backlog ? <BacklogPipeline backlog={backlog as BacklogData} /> : null}
 
-        {fleet.counts.total > 0 ? (
-          <Sounding
-            ticks={fleet.ticks}
-            title="Fleet sounding"
-            hint="Every planned task, placed by how far through its interval it has run"
-          />
-        ) : !overview ? (
-          <section className="rounded-lg border border-ink-12 bg-white px-6 py-10 text-center">
-            <p className="font-cond text-lg font-semibold">No maintenance plans yet.</p>
-            <p className="mt-1 text-sm text-ink-45">
-              Register equipment against a vessel, then apply the task library to it.
-            </p>
-          </section>
-        ) : null}
+      {overview ? (
+        <TodoList readiness={overview.readiness} attention={overview.attention} />
+      ) : null}
 
-        {backlog ? <BacklogPipeline backlog={backlog as BacklogData} /> : null}
+      {overview ? <OperatorComparison operators={overview.operators} /> : null}
 
-        {overview ? <OperatorComparison operators={overview.operators} /> : null}
-
-        <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-          <div className="flex items-center gap-3 border-b border-ink-12 px-4.5 py-3">
-            <h2 className="text-[17px] font-semibold">Vessels</h2>
-            <p className="text-[13px] text-ink-45">Most overdue first</p>
-            <Link href="/vessels" className="ml-auto text-[13px] text-ink-45 hover:text-ink hover:underline">
+      <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
+        <SectionHeader
+          icon={IconVessel}
+          title="Vessels"
+          hint="Most overdue first"
+          action={
+            <Link
+              href="/vessels"
+              className="text-[13px] text-ink-45 hover:text-ink hover:underline"
+            >
               Open the register
             </Link>
-          </div>
+          }
+        />
 
-          {fleet.vessels.length === 0 ? (
-            <p className="px-6 py-10 text-center text-sm text-ink-45">
-              No vessels {operator ? 'are assigned to you' : 'in the register'} yet.
-            </p>
-          ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="bg-shoal-soft">
+        {fleet.vessels.length === 0 ? (
+          <p className="px-6 py-10 text-center text-sm text-ink-45">
+            No vessels {operator ? 'are assigned to you' : 'in the register'} yet.
+          </p>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="bg-shoal-soft">
+                <th className="border-b border-ink-12 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-ink-45">
+                  Vessel
+                </th>
+                {!operator ? (
                   <th className="border-b border-ink-12 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-ink-45">
-                    Vessel
+                    Operator
                   </th>
+                ) : null}
+                <th className="w-[190px] border-b border-ink-12 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-ink-45">
+                  Schedule
+                </th>
+                <th className="border-b border-ink-12 px-3.5 py-2.5 text-right text-[12.5px] font-semibold text-ink-45">
+                  Due
+                </th>
+                <th className="border-b border-ink-12 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-ink-45">
+                  Needs attention
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {fleet.vessels.map(({ vessel, due, soon, ok, total, worst }) => (
+                <tr key={vessel.id} className="border-b border-ink-06 last:border-0 hover:bg-shoal-soft">
+                  <td className="px-3.5 py-3 align-baseline">
+                    <Link href={`/vessels/${vessel.id}`} className="font-medium hover:underline">
+                      {vessel.name}
+                    </Link>
+                    <p className="text-[12.5px] text-ink-45">{vessel.code}</p>
+                  </td>
+
                   {!operator ? (
-                    <th className="border-b border-ink-12 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-ink-45">
-                      Operator
-                    </th>
+                    <td className="px-3.5 py-3 align-baseline text-[13.5px] text-ink-70">
+                      {vessel.operator?.name ?? <span className="text-caution">Not assigned</span>}
+                    </td>
                   ) : null}
-                  <th className="w-[190px] border-b border-ink-12 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-ink-45">
-                    Schedule
-                  </th>
-                  <th className="border-b border-ink-12 px-3.5 py-2.5 text-right text-[12.5px] font-semibold text-ink-45">
-                    Due
-                  </th>
-                  <th className="border-b border-ink-12 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-ink-45">
-                    Needs attention
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {fleet.vessels.map(({ vessel, due, soon, ok, total, worst }) => (
-                  <tr key={vessel.id} className="border-b border-ink-06 last:border-0 hover:bg-shoal-soft">
-                    <td className="px-3.5 py-3 align-baseline">
-                      <Link href={`/vessels/${vessel.id}`} className="font-medium hover:underline">
-                        {vessel.name}
-                      </Link>
-                      <p className="text-[12.5px] text-ink-45">{vessel.code}</p>
-                    </td>
 
-                    {!operator ? (
-                      <td className="px-3.5 py-3 align-baseline text-[13.5px] text-ink-70">
-                        {vessel.operator?.name ?? <span className="text-caution">Not assigned</span>}
-                      </td>
+                  <td className="px-3.5 py-3 align-middle">
+                    <ProportionBar due={due} soon={soon} ok={ok} />
+                    <p className="mt-1.5 text-[12px] text-ink-45">
+                      {total === 0 ? 'No plans' : `${total} tasks`}
+                    </p>
+                  </td>
+
+                  <td className="px-3.5 py-3 text-right align-baseline">
+                    <span
+                      className={`font-cond text-[19px] font-semibold ${
+                        due > 0 ? 'text-danger' : soon > 0 ? 'text-caution' : 'text-ink-45'
+                      }`}
+                    >
+                      {due || (soon ? soon : '—')}
+                    </span>
+                    {soon > 0 && due > 0 ? (
+                      <span className="ml-1.5 text-[12px] text-caution">+{soon} soon</span>
                     ) : null}
+                  </td>
 
-                    <td className="px-3.5 py-3 align-middle">
-                      <ProportionBar due={due} soon={soon} ok={ok} />
-                      <p className="mt-1.5 text-[12px] text-ink-45">
-                        {total === 0 ? 'No plans' : `${total} tasks`}
-                      </p>
-                    </td>
-
-                    <td className="px-3.5 py-3 text-right align-baseline">
-                      <span
-                        className={`font-cond text-[19px] font-semibold ${
-                          due > 0 ? 'text-danger' : soon > 0 ? 'text-caution' : 'text-ink-45'
-                        }`}
-                      >
-                        {due || (soon ? soon : '—')}
-                      </span>
-                      {soon > 0 && due > 0 ? (
-                        <span className="ml-1.5 text-[12px] text-caution">+{soon} soon</span>
-                      ) : null}
-                    </td>
-
-                    <td className="px-3.5 py-3 align-baseline">
-                      {worst ? (
-                        <>
-                          <p className="text-[13.5px]">{worst.task?.activity_description}</p>
-                          <p className="text-[12.5px] text-ink-45">
-                            {worst.equipment?.name} ·{' '}
-                            <span className="text-danger">
-                              {hours(worst.remaining)} {worst.is_meter_based ? 'hrs' : 'days'} past
-                            </span>
-                          </p>
-                        </>
-                      ) : (
-                        <span className="text-[13.5px] text-ink-45">Nothing overdue</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </section>
-      </div>
-    </>
+                  <td className="px-3.5 py-3 align-baseline">
+                    {worst ? (
+                      <>
+                        <p className="text-[13.5px]">{worst.task?.activity_description}</p>
+                        <p className="text-[12.5px] text-ink-45">
+                          {worst.equipment?.name} ·{' '}
+                          <span className="text-danger">
+                            {hours(worst.remaining)} {worst.is_meter_based ? 'hrs' : 'days'} past
+                          </span>
+                        </p>
+                      </>
+                    ) : (
+                      <span className="text-[13.5px] text-ink-45">Nothing overdue</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+    </div>
   );
 }

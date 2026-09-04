@@ -7,6 +7,7 @@ use App\Models\Concerns\BelongsToOrganisation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Operator;
 
 class StockTransaction extends Model
 {
@@ -37,5 +38,15 @@ class StockTransaction extends Model
     public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
+    }
+	
+	public function operator(): BelongsTo
+    {
+        return $this->belongsTo(Operator::class);
+    }
+	
+	public function recordedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
     }
 }

@@ -1,3 +1,5 @@
+import { IconSounding } from '@/components/icons';
+import { SectionHeader } from '@/components/section-header';
 import type { DueStatus } from '@/types/api';
 
 export interface Tick {
@@ -52,21 +54,24 @@ export function Sounding({
 
   return (
     <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-      <div className="flex flex-wrap items-baseline gap-3.5 border-b border-ink-12 px-5 py-3">
-        <h2 className="text-[17px] font-semibold">{title}</h2>
-        {hint ? <p className="text-[13px] text-ink-45">{hint}</p> : null}
-        <div className="ml-auto flex gap-4 text-[12.5px] text-ink-70">
-          <span className="flex items-center gap-1.5">
-            <i className="h-2 w-2 rounded-sm bg-danger" aria-hidden /> Due
-          </span>
-          <span className="flex items-center gap-1.5">
-            <i className="h-2 w-2 rounded-sm bg-caution" aria-hidden /> Due soon
-          </span>
-          <span className="flex items-center gap-1.5">
-            <i className="h-2 w-2 rounded-sm bg-safe" aria-hidden /> On track
-          </span>
-        </div>
-      </div>
+      <SectionHeader
+        icon={IconSounding}
+        title={title}
+        hint={hint}
+        action={
+          <div className="flex gap-4 text-[12.5px] text-ink-70">
+            <span className="flex items-center gap-1.5">
+              <i className="h-2 w-2 rounded-sm bg-danger" aria-hidden /> Due
+            </span>
+            <span className="flex items-center gap-1.5">
+              <i className="h-2 w-2 rounded-sm bg-caution" aria-hidden /> Due soon
+            </span>
+            <span className="flex items-center gap-1.5">
+              <i className="h-2 w-2 rounded-sm bg-safe" aria-hidden /> On track
+            </span>
+          </div>
+        }
+      />
 
       <div className="px-5 pt-4 pb-3">
         <div className="relative h-[132px]">

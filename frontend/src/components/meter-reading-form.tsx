@@ -1,8 +1,9 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { recordMeterReading, type EquipmentResult } from '@/actions/equipment';
+import { SavedNote } from '@/components/saved-note';
 
 function Submit() {
   const { pending } = useFormStatus();
@@ -37,18 +38,20 @@ export function MeterReadingForm({
   const record = recordMeterReading.bind(null, equipmentId);
   const [state, action] = useActionState<EquipmentResult, FormData>(record, {});
   const [isReset, setIsReset] = useState(false);
+  const form = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state.ok) {
+      form.current?.reset();
+      setIsReset(false);
+    }
+  }, [state]);
 
   return (
-    <form action={action} className="space-y-3">
+    <form ref={form} action={action} className="space-y-3">
       {state.error ? (
         <p role="alert" className="rounded-md border border-danger/25 bg-danger-soft px-3 py-2 text-[13px] text-danger">
           {state.error}
-        </p>
-      ) : null}
-
-      {state.ok ? (
-        <p className="rounded-md border border-safe/25 bg-safe-soft px-3 py-2 text-[13px] text-safe">
-          Reading recorded. Due dates have been recomputed.
         </p>
       ) : null}
 
@@ -97,16 +100,16 @@ export function MeterReadingForm({
       </label>
 
       {isReset ? (
-        <div>
-          <input
-            name="remarks"
-            required
-            placeholder="Say what happened — this breaks the usage arithmetic."
-            aria-label="Reason for the reset"
-            className="w-full rounded-md border border-ink-22 px-2.5 py-1.5 text-sm outline-none focus:border-ink-45"
-          />
-        </div>
+        <input
+          name="remarks"
+          required
+          placeholder="Say what happened — this breaks the usage arithmetic."
+          aria-label="Reason for the reset"
+          className="w-full rounded-md border border-ink-22 px-2.5 py-1.5 text-sm outline-none focus:border-ink-45"
+        />
       ) : null}
+
+      <SavedNote on={state.ok ? state : null}>Recorded, due dates recomputed</SavedNote>
     </form>
   );
 }

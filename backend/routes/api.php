@@ -22,13 +22,17 @@ use App\Http\Controllers\Api\TradeController;
 use App\Http\Controllers\Api\PartCategoryController;
 use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\OverviewController;
+use App\Http\Controllers\Api\NavCountController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\StockController;
 
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
 Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
-
+	Route::get('nav-counts', [NavCountController::class, 'index']);
+	
     // -- reading ------------------------------------------------------------
     Route::middleware('permission:'.P::VIEW_MASTERS)->group(function () {
         Route::get('ship-types', [ShipTypeController::class, 'index']);
@@ -102,6 +106,9 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
         Route::get('parts/{part}', [PartController::class, 'show']);
 		Route::get('parts/{part}/stocks', [PartController::class, 'stocks']);
         Route::get('stock/below-reorder', [PartController::class, 'belowReorderLevel']);
+		
+		Route::get('stock', [StockController::class, 'index']);
+        Route::get('stock/{part}', [StockController::class, 'show']);
     });
 
     // -- master data --------------------------------------------------------
@@ -189,4 +196,14 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
 
     Route::post('work-orders/{workOrder}/issue-parts', [WorkOrderController::class, 'issueParts'])
         ->middleware('permission:'.P::MOVE_STOCK);
+		
+	Route::middleware('permission:'.P::MANAGE_USERS)->group(function () {
+		Route::get('users', [UserController::class, 'index']);
+		Route::post('users', [UserController::class, 'store']);
+		Route::put('users/{user}', [UserController::class, 'update']);
+		Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword']);
+		Route::post('users/{user}/suspend', [UserController::class, 'suspend']);
+		Route::post('users/{user}/reinstate', [UserController::class, 'reinstate']);
+    });
+	
 });

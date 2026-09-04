@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import { IconOperator } from '@/components/icons';
 import { ProportionBar } from '@/components/proportion-bar';
+import { SectionHeader } from '@/components/section-header';
 import { date } from '@/lib/format';
 import type { OperatorRow } from '@/lib/overview';
 
@@ -31,14 +33,15 @@ export function OperatorComparison({ operators }: { operators: OperatorRow[] }) 
 
   return (
     <section className="overflow-hidden rounded-lg border border-ink-12 bg-white">
-      <div className="flex flex-wrap items-baseline gap-3 border-b border-ink-12 px-5 py-3">
-        <h2 className="text-[17px] font-semibold">Across the operators</h2>
-        <p className="text-[13px] text-ink-45">
-          {operators.length === 1
+      <SectionHeader
+        icon={IconOperator}
+        title="Across the operators"
+        hint={
+          operators.length === 1
             ? 'Comparison becomes useful once a second operator is running vessels.'
-            : 'Same measures, whoever holds the vessel'}
-        </p>
-      </div>
+            : 'Same measures, whoever holds the vessel'
+        }
+      />
 
       <table className="w-full">
         <thead>

@@ -2,7 +2,10 @@ import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { get } from '@/lib/api';
 import { getToken } from '@/lib/session';
-import type { CurrentUser, Role } from '@/types/api';
+import type { CurrentUser } from '@/types/api';
+
+// Re-exported so server components can keep importing from one place.
+export { hasRole, isOperator, isReadOnly } from '@/lib/roles';
 
 /**
  * The signed-in user, fetched once per request.
@@ -26,20 +29,4 @@ export async function requireUser(): Promise<CurrentUser> {
   if (!user) redirect('/login');
 
   return user;
-}
-
-export function hasRole(user: CurrentUser, ...roles: Role[]): boolean {
-  return user.is_platform_admin || roles.some((role) => user.roles.includes(role));
-}
-
-/** An operating company's shared login, as opposed to department staff. */
-export function isOperator(user: CurrentUser): boolean {
-  return user.roles.includes('operator');
-}
-
-export function isReadOnly(user: CurrentUser): boolean {
-  return (
-    !user.is_platform_admin &&
-    user.roles.every((role) => role === 'auditor' || role === 'management')
-  );
 }

@@ -1,4 +1,8 @@
+'use client';
+
 import Link from 'next/link';
+import { useMemo } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { signOut } from '@/actions/auth';
 import {
   IconCode,
@@ -18,7 +22,7 @@ import {
   IconWorkOrder,
   Mark,
 } from '@/components/icons';
-import { hasRole, isOperator } from '@/lib/auth';
+import { hasRole, isOperator } from '@/lib/roles';
 import type { CurrentUser } from '@/types/api';
 
 type IconComponent = (props: { className?: string }) => React.ReactElement;
@@ -71,7 +75,6 @@ function groupsFor(user: CurrentUser, counts: RailCounts): Group[] {
       items: [
         { href: '/vessels', label: 'Vessels', icon: IconVessel, count: counts.vessels },
         { href: '/equipment', label: 'Equipment', icon: IconEquipment },
-		{ href: '/criticality', label: 'Criticality', icon: IconScale },
         { href: '/plans', label: 'Maintenance plans', icon: IconSchedule, count: counts.plans },
       ],
     },
@@ -101,10 +104,24 @@ function groupsFor(user: CurrentUser, counts: RailCounts): Group[] {
     });
   }
 
+  /*if (hasRole(user, 'department-admin', 'technical-authority')) {
+    groups.push({
+      heading: 'Setup',
+      items: [
+        { href: '/setup/criticality', label: 'Criticality scales', icon: IconScale },
+        { href: '/setup/codes', label: 'Failure codes', icon: IconCode },
+        ...(hasRole(user, 'department-admin')
+          ? [{ href: '/setup/users', label: 'Users & roles', icon: IconPeople }]
+          : []),
+      ],
+    });
+  }*/
+  
   if (hasRole(user, 'department-admin', 'technical-authority', 'planner')) {
     groups.push({
       heading: 'Setup',
       items: [
+        // The seven master tables are tabs inside one screen, not seven entries.
         { href: '/setup/ship-types', label: 'Master data', icon: IconLibrary },
         { href: '/criticality', label: 'Criticality', icon: IconScale },
         ...(hasRole(user, 'department-admin')
@@ -126,24 +143,50 @@ function initials(name: string): string {
     .join('');
 }
 
-export function Rail({
-  user,
-  current,
-  counts = {},
-}: {
-  user: CurrentUser;
-  current: string;
-  counts?: RailCounts;
-}) {
-  const roleLabel = user.is_platform_admin
-    ? 'Platform administrator'
-    : (user.roles[0] ?? 'no role assigned').replace(/-/g, ' ');
+export function Rail({ user, counts = {} }: { user: CurrentUser; counts?: RailCounts }) {
+  // usePathname updates on every navigation. Reading it from a header in the
+  // layout did not: layouts are preserved between sibling routes, so the rail
+  // kept whichever path it saw first.
+  const current = usePathname();
+  const params = useSearchParams();
+  const groups = groupsFor(user, counts);
+
+  /**
+   * Only the most specific entry lights up.
+   *
+   * "Overdue tasks" points at /plans?due_status=due and "Maintenance plans" at
+   * /plans, so matching on path alone lit both. An entry carrying a query is
+   * more specific than one without, and the longest match wins.
+   */
+  const activeHref = useMemo(() => {
+    const matches = groups
+      .flatMap((group) => group.items)
+      .filter((item) => {
+        const [path, query] = item.href.split('?');
+
+        if (current !== path && !current.startsWith(path + '/')) return false;
+        if (!query) return true;
+
+        return [...new URLSearchParams(query).entries()].every(
+          ([key, value]) => params.get(key) === value,
+        );
+      });
+
+    return matches.sort((a, b) => b.href.length - a.href.length)[0]?.href;
+  }, [current, params, groups]);
+
+  // Superadmin and department administrator are the same person here; there is
+  // no tier above the organisation in this deployment.
+  const roleLabel =
+    user.is_platform_admin || user.roles.includes('department-admin')
+      ? 'Superadmin'
+      : (user.roles[0] ?? 'no role assigned').replace(/-/g, ' ');
 
   return (
-    <aside className="rail-surface rail-edge relative sticky top-0 flex h-screen flex-col overflow-hidden text-[#E4F1F2]">
+    <aside className="relative sticky top-0 flex h-screen flex-col overflow-hidden bg-ink text-[#DCE8E8]">
       {/* Depth contours rising from the foot of the rail. */}
       <svg
-        className="pointer-events-none absolute right-0 bottom-0 left-0 h-48 w-full opacity-[0.30]"
+        className="pointer-events-none absolute right-0 bottom-0 left-0 h-48 w-full opacity-[0.18]"
         viewBox="0 0 240 190"
         preserveAspectRatio="none"
         aria-hidden
@@ -156,32 +199,31 @@ export function Rail({
         </g>
       </svg>
 
-      <div className="relative flex items-center gap-3 px-5 pt-5 pb-5">
+      <div className="relative flex items-center gap-3 px-5 pt-5 pb-4">
         <Mark />
         <div className="min-w-0">
           <p className="font-cond text-[22px] leading-none font-bold tracking-wide text-white">
             WB PMS
           </p>
-          <p className="mt-1 truncate text-[11.5px] leading-snug text-shoal/70">
+          <p className="mt-1 truncate text-[11.5px] leading-snug text-white/45">
             {user.organisation?.name ?? 'No organisation'}
           </p>
         </div>
       </div>
 
       <nav className="relative flex-1 overflow-y-auto px-2.5 pb-3">
-        {groupsFor(user, counts).map((group, index) => (
+        {groups.map((group, index) => (
           <div key={group.heading}>
             <p
-              className={`font-cond px-3 pb-1 text-[11.5px] font-semibold tracking-[0.16em] text-shoal/55 uppercase ${
-                index === 0 ? 'pt-1' : 'mt-3 border-t border-shoal/12 pt-3.5'
+              className={`font-cond px-3 pb-1 text-[11.5px] font-semibold tracking-[0.16em] text-white/30 uppercase ${
+                index === 0 ? 'pt-1' : 'mt-3 border-t border-white/[0.07] pt-3.5'
               }`}
             >
               {group.heading}
             </p>
 
             {group.items.map((item) => {
-              const path = item.href.split('?')[0];
-              const active = current === path || current.startsWith(path + '/');
+              const active = item.href === activeHref;
               const Icon = item.icon;
 
               return (
@@ -191,20 +233,20 @@ export function Rail({
                   aria-current={active ? 'page' : undefined}
                   className={`group relative flex items-center gap-2.5 rounded-md py-[7px] pr-2.5 pl-3 text-[14px] transition-colors ${
                     active
-                      ? 'bg-shoal/[0.16] font-medium text-white shadow-[inset_0_1px_0_rgba(159,216,222,.18)]'
-                      : 'text-white/78 hover:bg-shoal/[0.08] hover:text-white'
+                      ? 'bg-white/[0.10] font-medium text-white'
+                      : 'text-white/65 hover:bg-white/[0.05] hover:text-white'
                   }`}
                 >
                   {/* Chart magenta marks the current place. */}
                   <span
                     className={`absolute top-1.5 bottom-1.5 -left-0.5 w-[2.5px] rounded-full transition-colors ${
-                      active ? 'bg-danger shadow-[0_0_10px_rgba(219,10,102,.7)]' : 'bg-transparent'
+                      active ? 'bg-danger' : 'bg-transparent'
                     }`}
                     aria-hidden
                   />
                   <Icon
                     className={`h-[17px] w-[17px] shrink-0 transition-colors ${
-                      active ? 'text-shoal' : 'text-shoal/55 group-hover:text-shoal'
+                      active ? 'text-shoal' : 'text-white/40 group-hover:text-white/70'
                     }`}
                   />
                   <span className="truncate">{item.label}</span>
@@ -212,8 +254,8 @@ export function Rail({
                     <span
                       className={`font-cond ml-auto rounded px-1.5 text-[13px] leading-[18px] font-semibold ${
                         item.tone === 'due'
-                          ? 'bg-danger/25 text-[#FF6FA8]'
-                          : 'text-shoal/60 group-hover:text-shoal'
+                          ? 'bg-danger/20 text-danger'
+                          : 'text-white/40 group-hover:text-white/60'
                       }`}
                     >
                       {item.count}
@@ -226,23 +268,23 @@ export function Rail({
         ))}
       </nav>
 
-      <div className="relative flex items-center gap-2.5 border-t border-shoal/15 px-5 py-3.5">
+      <div className="relative flex items-center gap-2.5 border-t border-white/10 px-5 py-3.5">
         <span
-          className="font-cond flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-shoal/20 text-[14px] font-semibold text-shoal"
+          className="font-cond flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-shoal/15 text-[14px] font-semibold text-shoal"
           aria-hidden
         >
           {initials(user.name)}
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[13.5px] leading-tight text-white">{user.name}</p>
-          <p className="truncate text-[12px] text-shoal/65 capitalize">{roleLabel}</p>
+          <p className="truncate text-[12px] text-white/45 capitalize">{roleLabel}</p>
         </div>
         <form action={signOut}>
           <button
             type="submit"
             title="Sign out"
             aria-label="Sign out"
-            className="rounded p-1.5 text-shoal/55 transition-colors hover:bg-shoal/15 hover:text-white"
+            className="rounded p-1.5 text-white/40 transition-colors hover:bg-white/10 hover:text-white"
           >
             <svg
               viewBox="0 0 24 24"
